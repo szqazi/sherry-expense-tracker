@@ -78,13 +78,15 @@ The default mode (Home Screen) should be the Entry Mode
 
 &#x09;\* Each Graph will be for the duration of that month.
 
+&#x09;\* It should be possible to toggle the Currency in any Overview Graph. Default should be Rs
+
 &#x09;\* The following graphs will be there (name of the button will be what is mentioning below in quotation marks
 
 &#x09;	\* "Monthly Summary": Ring Graph showing Total Income, the % Expenses and % Savings
 
 &#x09;	\* "Expense Distribution":
 
-&#x09;	\* "PK Expense Distribution":
+&#x09;	\* "PK Expense Distribution": It should consider all expenses categories other than "DE" and "DE Air Ticket"
 
 &#x09;	\* "Yearly Overview":
 
@@ -102,9 +104,9 @@ The default mode (Home Screen) should be the Entry Mode
 
 &#x09;			\* Bar graphs where bars for income and expenses for each month
 
-&#x09;			\* Best Month highlighted TBD
+&#x09;			// ignore this line for now \* Best Month highlighted TBD
 
-&#x09;		 	\* Worst Month highlighted with TBD
+&#x09;		 	// ignore this line for now \* Worst Month highlighted with TBD
 
 
 
@@ -131,6 +133,8 @@ The default mode (Home Screen) should be the Entry Mode
 &#x09;\* DE Air Ticket
 
 &#x09;\* Spende
+
+&#x09;\* PK Others
 
 
 
