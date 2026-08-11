@@ -5,6 +5,7 @@ const SETTINGS_KEY = "sherry-expenses:settings";
 
 export const DEFAULT_SETTINGS: Settings = {
   name: "",
+  gender: null,
   dateOfBirth: null,
   theme: "dark",
   defaultCurrency: "PKR",

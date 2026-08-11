@@ -38,8 +38,11 @@ export interface Entry {
 
 export type ThemeMode = "dark" | "light";
 
+export type Gender = "Male" | "Female";
+
 export interface Settings {
   name: string;
+  gender: Gender | null;
   dateOfBirth: string | null;
   theme: ThemeMode;
   defaultCurrency: Currency;

@@ -14,8 +14,10 @@ interface AppContextValue {
   entries: Entry[];
   addEntry: (entry: Omit<Entry, "id" | "createdAt">) => void;
   deleteEntry: (id: string) => void;
+  deleteAllEntries: () => void;
   settings: Settings;
   updateSettings: (patch: Partial<Settings>) => void;
+  deletePersonalInfo: () => void;
   currency: Currency;
   setCurrency: (c: Currency) => void;
 }
@@ -53,8 +55,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setEntries((prev) => prev.filter((e) => e.id !== id));
   }, []);
 
+  const deleteAllEntries = useCallback(() => {
+    setEntries([]);
+  }, []);
+
   const updateSettings = useCallback((patch: Partial<Settings>) => {
     setSettings((prev) => ({ ...prev, ...patch }));
+  }, []);
+
+  const deletePersonalInfo = useCallback(() => {
+    setSettings((prev) => ({ ...prev, name: "", gender: null, dateOfBirth: null }));
   }, []);
 
   const value = useMemo(
@@ -62,12 +72,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
       entries,
       addEntry,
       deleteEntry,
+      deleteAllEntries,
       settings,
       updateSettings,
+      deletePersonalInfo,
       currency,
       setCurrency,
     }),
-    [entries, addEntry, deleteEntry, settings, updateSettings, currency],
+    [entries, addEntry, deleteEntry, deleteAllEntries, settings, updateSettings, deletePersonalInfo, currency],
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

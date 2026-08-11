@@ -101,7 +101,7 @@ export function EntryScreen() {
             placeholder="0"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            className="w-[180px] bg-transparent text-center text-6xl font-semibold text-[var(--text)] outline-none placeholder:text-[var(--text-muted)]/40 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            className="w-[7ch] min-w-[240px] max-w-[75vw] bg-transparent text-center text-6xl font-semibold text-[var(--text)] outline-none placeholder:text-[var(--text-muted)]/40 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
         </div>
         <span className="text-xs text-[var(--text-muted)] mt-1">tap {CURRENCY_SYMBOL[currency]} to switch currency</span>

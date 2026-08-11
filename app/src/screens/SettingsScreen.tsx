@@ -3,14 +3,28 @@ import { useApp } from "../lib/AppContext";
 import { exportMonthlyOverviewPdf, exportYearlyOverviewPdf } from "../lib/pdfExport";
 import { currentMonthIndex, currentYear, monthLabel } from "../lib/dateUtils";
 import { Toast, type ToastState } from "../components/Toast";
+import { ConfirmDialog } from "../components/ConfirmDialog";
+import type { Gender } from "../lib/types";
 
 const APP_VERSION = "1.0.0";
 
 export function SettingsScreen() {
-  const { settings, updateSettings, entries, currency } = useApp();
+  const { settings, updateSettings, entries, deleteAllEntries, deletePersonalInfo, currency } = useApp();
   const [toast, setToast] = useState<ToastState | null>(null);
   const [exportYear, setExportYear] = useState(currentYear());
   const [exportMonth, setExportMonth] = useState(currentMonthIndex());
+  const [confirmAction, setConfirmAction] = useState<"entries" | "personalInfo" | null>(null);
+
+  function handleConfirmDelete() {
+    if (confirmAction === "entries") {
+      deleteAllEntries();
+      setToast({ kind: "success", message: "All data entries deleted." });
+    } else if (confirmAction === "personalInfo") {
+      deletePersonalInfo();
+      setToast({ kind: "success", message: "Personal info deleted." });
+    }
+    setConfirmAction(null);
+  }
 
   function handleExportMonthly() {
     try {
@@ -46,6 +60,20 @@ export function SettingsScreen() {
             className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text)] outline-none focus:border-[var(--accent)] text-sm"
           />
         </Field>
+        <Field label="Gender">
+          <div className="flex bg-[var(--surface)] border border-[var(--border)] rounded-xl p-1">
+            <GenderButton
+              label="Male"
+              active={settings.gender === "Male"}
+              onClick={() => updateSettings({ gender: "Male" as Gender })}
+            />
+            <GenderButton
+              label="Female"
+              active={settings.gender === "Female"}
+              onClick={() => updateSettings({ gender: "Female" as Gender })}
+            />
+          </div>
+        </Field>
         <Field label="Date of Birth">
           <input
             type="date"
@@ -55,6 +83,23 @@ export function SettingsScreen() {
             className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text)] outline-none focus:border-[var(--accent)] text-sm"
           />
         </Field>
+      </Section>
+
+      <Section title="Delete">
+        <button
+          onClick={() => setConfirmAction("entries")}
+          className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3.5 text-sm font-medium text-left active:bg-[var(--surface-2)]"
+          style={{ color: "var(--danger)" }}
+        >
+          Delete ALL Data Entries
+        </button>
+        <button
+          onClick={() => setConfirmAction("personalInfo")}
+          className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3.5 text-sm font-medium text-left active:bg-[var(--surface-2)]"
+          style={{ color: "var(--danger)" }}
+        >
+          Delete Personal Info
+        </button>
       </Section>
 
       <Section title="App Settings">
@@ -127,6 +172,19 @@ export function SettingsScreen() {
         <InfoRow label="App Version" value={APP_VERSION} />
         <InfoRow label="Developer" value="Sherry" />
       </Section>
+
+      {confirmAction && (
+        <ConfirmDialog
+          title={confirmAction === "entries" ? "Delete all data entries?" : "Delete personal info?"}
+          message={
+            confirmAction === "entries"
+              ? "This permanently deletes every expense and income entry you've recorded. This can't be undone."
+              : "This permanently clears your name, gender, and date of birth. This can't be undone."
+          }
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setConfirmAction(null)}
+        />
+      )}
     </div>
   );
 }
@@ -147,6 +205,19 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
       {children}
       {hint && <p className="text-[11px] text-[var(--text-muted)] mt-1">{hint}</p>}
     </div>
+  );
+}
+
+function GenderButton({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+        active ? "bg-[var(--accent)] text-white" : "text-[var(--text-muted)]"
+      }`}
+    >
+      {label}
+    </button>
   );
 }
 

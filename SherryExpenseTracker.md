@@ -1,12 +1,10 @@
-
-
 ### Modes:
 
-There should be two modes for the app, that the user can toggle 
+There should be two modes for the app, that the user can toggle
 
 &#x09;1. Entry Mode: Used to enter the expense and income.
 
-&#x09;2. Overview Mode: Used to see overview of the month  
+&#x09;2. Overview Mode: Used to see overview of the month
 
 The default mode (Home Screen) should be the Entry Mode
 
@@ -64,7 +62,7 @@ The default mode (Home Screen) should be the Entry Mode
 
 &#x09;	1. Open App, it will load the Entry Mode Screen . If on other tab, switch back to Entry Mode
 
-&#x09;	2. Enter Amount (should be shown on the App in big font). Should be possible to change currency (but subtly). If Income, toggle to Income  
+&#x09;	2. Enter Amount (should be shown on the App in big font). Should be possible to change currency (but subtly). If Income, toggle to Income. the entry field should be width enough to accommodate 6 digits viewing in mobile phone easily
 
 &#x09;	3. Categorize the Expense / Income according to the defined categories
 
@@ -82,11 +80,11 @@ The default mode (Home Screen) should be the Entry Mode
 
 &#x09;\* The following graphs will be there (name of the button will be what is mentioning below in quotation marks
 
-&#x09;	\* "Monthly Summary": Ring Graph showing Total Income, the % Expenses and % Savings 
+&#x09;	\* "Monthly Summary": Ring Graph showing Total Income, the % Expenses and % Savings
 
-&#x09;	\* "Expense Distribution": 
+&#x09;	\* "Expense Distribution":
 
-&#x09;	\* "PK Expense Distribution": 
+&#x09;	\* "PK Expense Distribution":
 
 &#x09;	\* "Yearly Overview":
 
@@ -104,9 +102,9 @@ The default mode (Home Screen) should be the Entry Mode
 
 &#x09;			\* Bar graphs where bars for income and expenses for each month
 
-&#x09;			\* Best Month highlighted with green
+&#x09;			\* Best Month highlighted TBD
 
-&#x09;		 	\* Worst Month highlighted with red
+&#x09;		 	\* Worst Month highlighted with TBD
 
 
 
@@ -142,7 +140,7 @@ The default mode (Home Screen) should be the Entry Mode
 
 &#x09;\* Yearly Bonus
 
-&#x09;\* Tax Return 
+&#x09;\* Tax Return
 
 &#x09;\* Health Insurance Return
 
@@ -168,11 +166,23 @@ Under Setting there should be:
 
 &#x09;	\* Name:
 
+&#x09;	\* Gender: (Give "Male" and Female" as toggle options)
+
 &#x09;	\* Date of Birth:
+
+&#x09;\* Delete
+
+&#x09;	\* Delete ALL Date Entries
+
+&#x09;	\* Delete Personal Info
 
 &#x09;\* App Settings:
 
 &#x09;	\* Theme. Toggle Dark / Light Mode
+
+&#x09;\* Edit Data:
+
+&#x09;	\* TBD
 
 &#x09;\* Export Data
 
