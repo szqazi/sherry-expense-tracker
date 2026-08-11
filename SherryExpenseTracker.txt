@@ -1,0 +1,91 @@
+
+* Modes:
+There should be two modes for the app, that the user can toggle 
+	1. Entry Mode: Used to enter the expense and income.
+	2. Overview Mode: Used to see overview of the month  
+The default mode (Home Screen) should be the Entry Mode
+
+* Currency:
+	Dual Currency support: Euro (shown as euro symbol) and Pakistani Rupees (shown as Rs)
+	* Default Currency should be Rsy
+	* It should be possible to toggle currency anytime
+	
+* UI:
+	* Dark theme, minilmalist UI.
+	* For Entry Mode
+		* Objective is enter the expense and its category with as ease and less clicks as possible
+		* There should be a comment textbox for the user (optional to fill)
+		* Default Category Selection should be PK Groceries
+	* For Overview Mode: Multiple Graphs (details to follow)
+	* Two tabs at the bottom, "Entry" and "Overview". Homescreen / startup screen should be showing the Entry Tab.
+	* There should be a Setting (Gear) Icon where the User can update settings for the app
+
+* Entry Mode:
+	* Default selections:
+		* Entry Type: Expense. For entering Income,  I need to toggle Expense
+		* Category:
+			* For Income: Salary
+			* For Expenses: PK Groceries
+	* Category selection: Should be a drop down menu
+	* Comments Field: Free Text
+	* Entry Date by Default Today (the day expense added), however it should be possible to edit it to any other day (only in past, not in future though)
+	* Date Entry Flow:
+		1. Open App, it will load the Entry Mode Screen . If on other tab, switch back to Entry Mode
+		2. 
+
+* Overview Mode:
+	* The Overview Screen has multiple clickable buttons, clicking on it will reveal show the graph in full screen
+	* Each Graph will be for the duration of that month.
+	* The following graphs will be there (name of the button will be what is mentioning below in quotation marks
+		* "Monthly Summary": Ring Graph showing Total Income, the % Expenses and % Savings 
+		* "Expense Distribution": 
+		* "PK Expense Distribution": 
+		* "Yearly Overview":
+			* Table showing below:
+				* Total Salary
+				* Total Savings
+				* Total Expenses
+				* Average Monthly Expense
+			* Graph:
+				* Bar graphs where bars for income and expenses for each month
+				* Best Month encircled with green
+			 	* Worst Month encoircled with red
+
+* Expense Categories:
+	* DE
+	* Car
+	* Health
+	* PK Rent
+	* PK Maids
+	* PK Bills
+	* PK Groceries
+	* PK Others
+	* Family Support
+	* DE Air Ticket
+	* Spende
+
+* Income Categories:
+	* Salary
+	* Yearly Bonus
+	* Tax Return 
+	* Health Insurance Return
+	* Gift
+	* Others
+	
+
+* Export Option:
+	TBD
+
+* Settings:
+Under Setting there should be:
+	* Personal Info:
+		* Name:
+		* Date of Birth:
+	* App Settings:
+		* Theme. Toggle Dark / Light Mode
+	* Export Data
+		* Export Monthly Overview as PDF
+		* Export Yearly Overview as PDF
+	* About: (Read Only)
+		* App Version
+		* Developer Info
