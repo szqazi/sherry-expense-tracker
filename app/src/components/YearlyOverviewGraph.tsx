@@ -67,7 +67,7 @@ export function YearlyOverviewGraph() {
                 borderRadius: 8,
                 fontSize: 12,
               }}
-              formatter={(value: number) => formatAmount(value, currency)}
+              formatter={(value) => formatAmount(Number(value), currency)}
             />
             <Bar dataKey="Income" radius={[3, 3, 0, 0]}>
               {chartData.map((entry) => (
@@ -93,8 +93,8 @@ function cellFill(monthIndex: number, best: number | null, worst: number | null,
 }
 
 function MonthTick(props: {
-  x?: number;
-  y?: number;
+  x?: number | string;
+  y?: number | string;
   payload?: { value: string; index: number };
   bestMonthIndex: number | null;
   worstMonthIndex: number | null;
@@ -107,7 +107,7 @@ function MonthTick(props: {
   const isWorst = monthIndex === worstMonthIndex;
   const color = isBest ? "var(--income)" : isWorst ? "var(--expense)" : "var(--text-muted)";
   return (
-    <text x={x} y={(y ?? 0) + 12} textAnchor="middle" fontSize={10} fontWeight={isBest || isWorst ? 700 : 400} fill={color}>
+    <text x={x} y={Number(y ?? 0) + 12} textAnchor="middle" fontSize={10} fontWeight={isBest || isWorst ? 700 : 400} fill={color}>
       {payload.value}
     </text>
   );
