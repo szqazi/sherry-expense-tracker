@@ -1,10 +1,12 @@
 ### Modes:
 
-There should be two modes for the app, that the user can toggle
+There should be three modes for the app, that the user can toggle
 
 &#x09;1. Entry Mode: Used to enter the expense and income.
 
 &#x09;2. Overview Mode: Used to see overview of the month
+
+&#x09;3. History Mode: List of all Entries made so far (can be edited or deleted from here)
 
 The default mode (Home Screen) should be the Entry Mode
 
@@ -211,4 +213,6 @@ Under Setting there should be:
 &#x09;	\* App Version
 
 &#x09;	\* Developer Info
+
+&#x09;	\* Share App (Give here the link to the GitHub repo which can be used to share with others)
 
