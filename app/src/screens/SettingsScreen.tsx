@@ -7,7 +7,7 @@ import { ConfirmDialog } from "../components/ConfirmDialog";
 import type { Gender } from "../lib/types";
 
 const APP_VERSION = "1.0.0";
-const GITHUB_REPO_URL = "https://github.com/szqazi/sherry-expense-tracker";
+const APP_SHARE_URL = "https://szqazi.github.io/sherry-expense-tracker/";
 
 export function SettingsScreen() {
   const { settings, updateSettings, entries, deleteAllEntries, deletePersonalInfo, currency } = useApp();
@@ -48,14 +48,14 @@ export function SettingsScreen() {
   async function handleShare() {
     if (navigator.share) {
       try {
-        await navigator.share({ title: "Sherry Expense Tracker", url: GITHUB_REPO_URL });
+        await navigator.share({ title: "Sherry Expense Tracker", url: APP_SHARE_URL });
       } catch {
         // user cancelled the share sheet — nothing to do
       }
       return;
     }
     try {
-      await navigator.clipboard.writeText(GITHUB_REPO_URL);
+      await navigator.clipboard.writeText(APP_SHARE_URL);
       setToast({ kind: "success", message: "Link copied to clipboard." });
     } catch {
       setToast({ kind: "error", message: "Couldn't copy the link. Please try again." });
@@ -194,7 +194,7 @@ export function SettingsScreen() {
           className="w-full flex items-center justify-between bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3.5 text-left active:bg-[var(--surface-2)]"
         >
           <span className="text-sm font-medium text-[var(--text)]">Share App</span>
-          <span className="text-xs text-[var(--accent)] truncate ml-3">github.com/szqazi/sherry-expense-tracker</span>
+          <span className="text-xs text-[var(--accent)] truncate ml-3">szqazi.github.io/sherry-expense-tracker</span>
         </button>
       </Section>
 
