@@ -13,6 +13,7 @@ import { loadEntries, loadSettings, saveEntries, saveSettings } from "./storage"
 interface AppContextValue {
   entries: Entry[];
   addEntry: (entry: Omit<Entry, "id" | "createdAt">) => void;
+  updateEntry: (id: string, patch: Omit<Entry, "id" | "createdAt">) => void;
   deleteEntry: (id: string) => void;
   deleteAllEntries: () => void;
   settings: Settings;
@@ -51,6 +52,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setEntries((prev) => [newEntry, ...prev]);
   }, []);
 
+  const updateEntry = useCallback((id: string, patch: Omit<Entry, "id" | "createdAt">) => {
+    setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, ...patch } : e)));
+  }, []);
+
   const deleteEntry = useCallback((id: string) => {
     setEntries((prev) => prev.filter((e) => e.id !== id));
   }, []);
@@ -71,6 +76,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     () => ({
       entries,
       addEntry,
+      updateEntry,
       deleteEntry,
       deleteAllEntries,
       settings,
@@ -79,7 +85,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
       currency,
       setCurrency,
     }),
-    [entries, addEntry, deleteEntry, deleteAllEntries, settings, updateSettings, deletePersonalInfo, currency],
+    [
+      entries,
+      addEntry,
+      updateEntry,
+      deleteEntry,
+      deleteAllEntries,
+      settings,
+      updateSettings,
+      deletePersonalInfo,
+      currency,
+    ],
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

@@ -1,6 +1,6 @@
-import { EntryTabIcon, OverviewTabIcon } from "./Icons";
+import { EntryTabIcon, HistoryTabIcon, OverviewTabIcon } from "./Icons";
 
-export type Tab = "entry" | "overview";
+export type Tab = "entry" | "overview" | "history";
 
 interface BottomNavProps {
   active: Tab;
@@ -22,6 +22,12 @@ export function BottomNav({ active, onChange }: BottomNavProps) {
           isActive={active === "overview"}
           icon={<OverviewTabIcon className="w-5 h-5" />}
           onClick={() => onChange("overview")}
+        />
+        <NavButton
+          label="History"
+          isActive={active === "history"}
+          icon={<HistoryTabIcon className="w-5 h-5" />}
+          onClick={() => onChange("history")}
         />
       </div>
     </div>

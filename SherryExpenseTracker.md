@@ -34,6 +34,8 @@ The default mode (Home Screen) should be the Entry Mode
 
 &#x09;\* For Overview Mode: Multiple Graphs (details to follow)
 
+&#x09;\* For History Mode: List of all entries made so far, from latest to oldest
+
 &#x09;\* Two tabs at the bottom, "Entry" and "Overview". Homescreen / startup screen should be showing the Entry Tab.
 
 &#x09;\* There should be a Setting (Gear) Icon where the User can update settings for the app
@@ -110,6 +112,20 @@ The default mode (Home Screen) should be the Entry Mode
 
 
 
+### History Mode:
+
+&#x09;\* The History mode shows all the entries made so far
+
+&#x09;\* Expenses should be red, income should be green
+
+&#x09;\* It should be possible to edit or delete any entry from the history mode (edit / delete both would need confirmation)
+
+&#x09;\* The entry should be in the form of Date: Amount (with currency) : Category
+
+&#x09;\* On the right hand side of the entry there should be an edit icon, clicking on it will allow the user to edit the entry (same way as entering data in the first instance)
+
+
+
 ### Expense Categories:
 
 &#x09;\* DE
@@ -183,10 +199,6 @@ Under Setting there should be:
 &#x09;\* App Settings:
 
 &#x09;	\* Theme. Toggle Dark / Light Mode
-
-&#x09;\* Edit Data:
-
-&#x09;	\* TBD
 
 &#x09;\* Export Data
 
