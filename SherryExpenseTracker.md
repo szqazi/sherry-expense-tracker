@@ -20,6 +20,8 @@ The default mode (Home Screen) should be the Entry Mode
 
 &#x09;\* It should be possible to toggle currency anytime
 
+&#x09;\* It should be possible to change support currencies under Settings --> App Settings --> Currencies. Maximum 2 currencies can be selected at a time. 1 is also OK.
+
 &#x09;
 
 ### UI:
@@ -202,6 +204,8 @@ Under Setting there should be:
 
 &#x09;	\* Theme. Toggle Dark / Light Mode
 
+&#x09;	\* Currencies: (default is PKR and EUR). Supported currencies are Rs, EUR, USD, Saudi Riyal, Canadian Dollar, Australian Dollar, GBP
+
 &#x09;\* Export Data
 
 &#x09;	\* Export Monthly Overview as PDF
@@ -214,5 +218,5 @@ Under Setting there should be:
 
 &#x09;	\* Developer Info
 
-&#x09;	\* Share App (Give here the link to the GitHub repo which can be used to share with others)
+&#x09;	\* Share App (Give here the link to the GitHub.io live app which can be used to share with others)
 

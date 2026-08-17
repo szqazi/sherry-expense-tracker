@@ -5,7 +5,7 @@ import { YearlyOverviewGraph } from "../components/YearlyOverviewGraph";
 import { NON_PK_EXPENSE_CATEGORIES, PK_EXPENSE_CATEGORIES } from "../lib/categories";
 import { CloseIcon } from "../components/Icons";
 import { useApp } from "../lib/AppContext";
-import { CURRENCY_SYMBOL } from "../lib/currency";
+import { CURRENCY_SYMBOL, nextCurrency } from "../lib/currency";
 
 type GraphKey = "summary" | "expense" | "pkExpense" | "yearly";
 
@@ -18,7 +18,7 @@ const CARDS: { key: GraphKey; title: string; hint: string }[] = [
 
 export function OverviewScreen() {
   const [open, setOpen] = useState<GraphKey | null>(null);
-  const { currency, setCurrency } = useApp();
+  const { currency, setCurrency, settings } = useApp();
 
   return (
     <div className="flex-1 flex flex-col px-5 pb-6">
@@ -43,13 +43,15 @@ export function OverviewScreen() {
                 {CARDS.find((c) => c.key === open)?.title}
               </h2>
               <div className="flex items-center gap-1">
-                <button
-                  onClick={() => setCurrency(currency === "PKR" ? "EUR" : "PKR")}
-                  className="text-sm text-[var(--text-muted)] font-medium px-2.5 py-1.5 rounded-full active:bg-[var(--surface-2)]"
-                  aria-label="Toggle currency"
-                >
-                  {CURRENCY_SYMBOL[currency]}
-                </button>
+                {settings.supportedCurrencies.length > 1 && (
+                  <button
+                    onClick={() => setCurrency(nextCurrency(currency, settings.supportedCurrencies))}
+                    className="text-sm text-[var(--text-muted)] font-medium px-2.5 py-1.5 rounded-full active:bg-[var(--surface-2)]"
+                    aria-label="Toggle currency"
+                  >
+                    {CURRENCY_SYMBOL[currency]}
+                  </button>
+                )}
                 <button
                   onClick={() => setOpen(null)}
                   className="w-9 h-9 flex items-center justify-center rounded-full text-[var(--text-muted)] active:bg-[var(--surface-2)]"

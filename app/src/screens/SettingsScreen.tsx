@@ -2,9 +2,10 @@ import { useState } from "react";
 import { useApp } from "../lib/AppContext";
 import { exportMonthlyOverviewPdf, exportYearlyOverviewPdf } from "../lib/pdfExport";
 import { currentMonthIndex, currentYear, monthLabel } from "../lib/dateUtils";
+import { ALL_CURRENCIES, CURRENCY_LABEL, CURRENCY_SYMBOL } from "../lib/currency";
 import { Toast, type ToastState } from "../components/Toast";
 import { ConfirmDialog } from "../components/ConfirmDialog";
-import type { Gender } from "../lib/types";
+import type { Currency, Gender } from "../lib/types";
 
 const APP_VERSION = "1.0.0";
 const APP_SHARE_URL = "https://szqazi.github.io/sherry-expense-tracker/";
@@ -29,7 +30,7 @@ export function SettingsScreen() {
 
   function handleExportMonthly() {
     try {
-      exportMonthlyOverviewPdf(entries, exportYear, exportMonth, currency, settings.exchangeRateEurToPkr);
+      exportMonthlyOverviewPdf(entries, exportYear, exportMonth, currency, settings.exchangeRates);
       setToast({ kind: "success", message: "Monthly PDF exported." });
     } catch {
       setToast({ kind: "error", message: "Couldn't export PDF. Please try again." });
@@ -38,11 +39,33 @@ export function SettingsScreen() {
 
   function handleExportYearly() {
     try {
-      exportYearlyOverviewPdf(entries, exportYear, currency, settings.exchangeRateEurToPkr);
+      exportYearlyOverviewPdf(entries, exportYear, currency, settings.exchangeRates);
       setToast({ kind: "success", message: "Yearly PDF exported." });
     } catch {
       setToast({ kind: "error", message: "Couldn't export PDF. Please try again." });
     }
+  }
+
+  function handleToggleCurrency(c: Currency) {
+    const selected = settings.supportedCurrencies;
+    if (selected.includes(c)) {
+      if (selected.length === 1) {
+        setToast({ kind: "error", message: "At least 1 currency must stay selected." });
+        return;
+      }
+      updateSettings({ supportedCurrencies: selected.filter((x) => x !== c) });
+    } else {
+      if (selected.length >= 2) {
+        setToast({ kind: "error", message: "You can select up to 2 currencies. Deselect one first." });
+        return;
+      }
+      updateSettings({ supportedCurrencies: [...selected, c] });
+    }
+  }
+
+  function handleRateChange(c: Currency, value: string) {
+    const numeric = parseFloat(value);
+    updateSettings({ exchangeRates: { ...settings.exchangeRates, [c]: Number.isNaN(numeric) ? 0 : numeric } });
   }
 
   async function handleShare() {
@@ -136,15 +159,40 @@ export function SettingsScreen() {
             />
           </div>
         </div>
-        <Field label="EUR → PKR exchange rate" hint="Used to combine € and Rs entries in overview totals.">
-          <input
-            type="number"
-            inputMode="decimal"
-            value={settings.exchangeRateEurToPkr}
-            onChange={(e) => updateSettings({ exchangeRateEurToPkr: parseFloat(e.target.value) || 0 })}
-            className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text)] outline-none focus:border-[var(--accent)] text-sm"
-          />
+        <Field label="Currencies" hint="Pick up to 2. Entries can use either; Overview and exports convert between them.">
+          <div className="flex flex-wrap gap-2">
+            {ALL_CURRENCIES.map((c) => {
+              const active = settings.supportedCurrencies.includes(c);
+              return (
+                <button
+                  key={c}
+                  onClick={() => handleToggleCurrency(c)}
+                  className="px-3 py-2 rounded-lg text-xs font-medium border transition-colors"
+                  style={{
+                    background: active ? "var(--accent)" : "var(--surface)",
+                    borderColor: active ? "var(--accent)" : "var(--border)",
+                    color: active ? "#fff" : "var(--text-muted)",
+                  }}
+                >
+                  {CURRENCY_SYMBOL[c]} {c}
+                </button>
+              );
+            })}
+          </div>
         </Field>
+        {settings.supportedCurrencies
+          .filter((c) => c !== "PKR")
+          .map((c) => (
+            <Field key={c} label={`${CURRENCY_LABEL[c]} → PKR rate`} hint={`How many Rs is 1 ${c}. Used to combine currencies in Overview totals and exports.`}>
+              <input
+                type="number"
+                inputMode="decimal"
+                value={settings.exchangeRates[c]}
+                onChange={(e) => handleRateChange(c, e.target.value)}
+                className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text)] outline-none focus:border-[var(--accent)] text-sm"
+              />
+            </Field>
+          ))}
       </Section>
 
       <Section title="Export Data">

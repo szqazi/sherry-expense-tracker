@@ -28,7 +28,13 @@ const AppContext = createContext<AppContextValue | null>(null);
 export function AppProvider({ children }: { children: ReactNode }) {
   const [entries, setEntries] = useState<Entry[]>(() => loadEntries());
   const [settings, setSettings] = useState<Settings>(() => loadSettings());
-  const [currency, setCurrency] = useState<Currency>(() => loadSettings().defaultCurrency);
+  const [currency, setCurrency] = useState<Currency>(() => loadSettings().supportedCurrencies[0]);
+
+  useEffect(() => {
+    if (!settings.supportedCurrencies.includes(currency)) {
+      setCurrency(settings.supportedCurrencies[0]);
+    }
+  }, [settings.supportedCurrencies, currency]);
 
   useEffect(() => {
     saveEntries(entries);

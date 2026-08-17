@@ -4,7 +4,7 @@ import { EntryForm, type EntryFormValues } from "../components/EntryForm";
 import { Toast, type ToastState } from "../components/Toast";
 
 export function EntryScreen() {
-  const { addEntry, currency, setCurrency } = useApp();
+  const { addEntry, currency, setCurrency, settings } = useApp();
   const [toast, setToast] = useState<ToastState | null>(null);
   const [formKey, setFormKey] = useState(0);
 
@@ -27,6 +27,7 @@ export function EntryScreen() {
       <EntryForm
         key={formKey}
         currency={currency}
+        supportedCurrencies={settings.supportedCurrencies}
         onCurrencyChange={setCurrency}
         onSubmit={handleSubmit}
         onValidationError={(message) => setToast({ kind: "error", message })}

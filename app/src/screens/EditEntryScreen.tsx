@@ -12,9 +12,12 @@ interface EditEntryScreenProps {
 }
 
 export function EditEntryScreen({ entry, onDone }: EditEntryScreenProps) {
-  const { updateEntry, deleteEntry } = useApp();
+  const { updateEntry, deleteEntry, settings } = useApp();
   const [currency, setCurrency] = useState<Currency>(entry.currency);
   const [toast, setToast] = useState<ToastState | null>(null);
+  const currencyOptions = settings.supportedCurrencies.includes(entry.currency)
+    ? settings.supportedCurrencies
+    : [entry.currency, ...settings.supportedCurrencies];
   const [pendingValues, setPendingValues] = useState<EntryFormValues | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -39,6 +42,7 @@ export function EditEntryScreen({ entry, onDone }: EditEntryScreenProps) {
       <EntryForm
         initial={entry}
         currency={currency}
+        supportedCurrencies={currencyOptions}
         onCurrencyChange={setCurrency}
         onSubmit={setPendingValues}
         onValidationError={(message) => setToast({ kind: "error", message })}

@@ -26,7 +26,7 @@ export function DistributionGraph({ categories }: { categories: string[] }) {
   const [monthIndex, setMonthIndex] = useState(currentMonthIndex());
 
   const monthEntries = entriesForMonth(entries, year, monthIndex);
-  const slices = categoryDistribution(monthEntries, currency, settings.exchangeRateEurToPkr, categories);
+  const slices = categoryDistribution(monthEntries, currency, settings.exchangeRates, categories);
   const total = slices.reduce((a, s) => a + s.amount, 0);
 
   return (

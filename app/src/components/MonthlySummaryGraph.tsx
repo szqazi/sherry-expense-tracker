@@ -12,7 +12,7 @@ export function MonthlySummaryGraph() {
   const [monthIndex, setMonthIndex] = useState(currentMonthIndex());
 
   const monthEntries = entriesForMonth(entries, year, monthIndex);
-  const summary = monthlySummary(monthEntries, currency, settings.exchangeRateEurToPkr);
+  const summary = monthlySummary(monthEntries, currency, settings.exchangeRates);
 
   const hasData = summary.income > 0 || summary.expense > 0;
   const data = hasData

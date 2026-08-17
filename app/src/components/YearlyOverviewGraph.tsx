@@ -11,7 +11,7 @@ export function YearlyOverviewGraph() {
   const [year, setYear] = useState(currentYear());
 
   const yearEntries = entriesForYear(entries, year);
-  const data = yearlyOverview(yearEntries, currency, settings.exchangeRateEurToPkr);
+  const data = yearlyOverview(yearEntries, currency, settings.exchangeRates);
 
   const chartData = data.months.map((m) => ({
     name: monthLabel(year, m.monthIndex),

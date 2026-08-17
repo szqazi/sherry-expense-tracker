@@ -36,10 +36,10 @@ export function exportMonthlyOverviewPdf(
   year: number,
   monthIndex: number,
   currency: Currency,
-  rate: number,
+  rates: Record<Currency, number>,
 ) {
   const monthEntries = entriesForMonth(entries, year, monthIndex);
-  const summary = monthlySummary(monthEntries, currency, rate);
+  const summary = monthlySummary(monthEntries, currency, rates);
 
   const doc = new jsPDF();
   header(doc, "Monthly Overview", `${monthLabel(year, monthIndex)} ${year}`);
@@ -101,9 +101,14 @@ export function exportMonthlyOverviewPdf(
   doc.save(`sherry-expenses-monthly-${year}-${String(monthIndex + 1).padStart(2, "0")}.pdf`);
 }
 
-export function exportYearlyOverviewPdf(entries: Entry[], year: number, currency: Currency, rate: number) {
+export function exportYearlyOverviewPdf(
+  entries: Entry[],
+  year: number,
+  currency: Currency,
+  rates: Record<Currency, number>,
+) {
   const yearEntries = entriesForYear(entries, year);
-  const overview = yearlyOverview(yearEntries, currency, rate);
+  const overview = yearlyOverview(yearEntries, currency, rates);
 
   const doc = new jsPDF();
   header(doc, "Yearly Overview", `${year}`);

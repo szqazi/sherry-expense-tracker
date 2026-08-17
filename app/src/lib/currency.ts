@@ -1,8 +1,38 @@
 import type { Currency } from "./types";
 
+export const ALL_CURRENCIES: Currency[] = ["PKR", "EUR", "USD", "SAR", "CAD", "AUD", "GBP"];
+
 export const CURRENCY_SYMBOL: Record<Currency, string> = {
   PKR: "Rs",
   EUR: "€",
+  USD: "$",
+  SAR: "SR",
+  CAD: "C$",
+  AUD: "A$",
+  GBP: "£",
+};
+
+export const CURRENCY_LABEL: Record<Currency, string> = {
+  PKR: "PKR — Pakistani Rupee",
+  EUR: "EUR — Euro",
+  USD: "USD — US Dollar",
+  SAR: "SAR — Saudi Riyal",
+  CAD: "CAD — Canadian Dollar",
+  AUD: "AUD — Australian Dollar",
+  GBP: "GBP — British Pound",
+};
+
+// Approximate value of 1 unit of each currency in PKR. User-editable in
+// Settings; used as a pivot so any two supported currencies can convert
+// through PKR without needing a rate for every possible pair.
+export const DEFAULT_EXCHANGE_RATES: Record<Currency, number> = {
+  PKR: 1,
+  EUR: 310,
+  USD: 280,
+  SAR: 74,
+  CAD: 205,
+  AUD: 185,
+  GBP: 355,
 };
 
 export function formatAmount(amount: number, currency: Currency): string {
@@ -11,17 +41,22 @@ export function formatAmount(amount: number, currency: Currency): string {
     minimumFractionDigits: rounded % 1 === 0 ? 0 : 2,
     maximumFractionDigits: 2,
   });
-  return currency === "PKR" ? `Rs ${formatted}` : `€${formatted}`;
+  return `${CURRENCY_SYMBOL[currency]} ${formatted}`;
 }
 
 export function convert(
   amount: number,
   from: Currency,
   to: Currency,
-  eurToPkrRate: number,
+  rates: Record<Currency, number>,
 ): number {
   if (from === to) return amount;
-  if (from === "EUR" && to === "PKR") return amount * eurToPkrRate;
-  if (from === "PKR" && to === "EUR") return amount / eurToPkrRate;
-  return amount;
+  const amountInPkr = amount * (rates[from] ?? 1);
+  return amountInPkr / (rates[to] ?? 1);
+}
+
+export function nextCurrency(current: Currency, supported: Currency[]): Currency {
+  if (supported.length === 0) return current;
+  const idx = supported.indexOf(current);
+  return supported[(idx + 1) % supported.length];
 }

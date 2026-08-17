@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { CURRENCY_SYMBOL } from "../lib/currency";
+import { CURRENCY_SYMBOL, nextCurrency } from "../lib/currency";
 import {
   DEFAULT_EXPENSE_CATEGORY,
   DEFAULT_INCOME_CATEGORY,
@@ -21,6 +21,7 @@ export interface EntryFormValues {
 interface EntryFormProps {
   initial?: Entry;
   currency: Currency;
+  supportedCurrencies: Currency[];
   onCurrencyChange: (c: Currency) => void;
   onSubmit: (values: EntryFormValues) => void;
   onValidationError: (message: string) => void;
@@ -31,6 +32,7 @@ interface EntryFormProps {
 export function EntryForm({
   initial,
   currency,
+  supportedCurrencies,
   onCurrencyChange,
   onSubmit,
   onValidationError,
@@ -89,9 +91,10 @@ export function EntryForm({
       <div className="flex flex-col items-center justify-center py-6">
         <div className="flex items-center gap-2">
           <button
-            onClick={() => onCurrencyChange(currency === "PKR" ? "EUR" : "PKR")}
-            className="text-lg text-[var(--text-muted)] font-medium px-2 py-1 rounded-md active:bg-[var(--surface-2)] self-start mt-3"
+            onClick={() => onCurrencyChange(nextCurrency(currency, supportedCurrencies))}
+            className="text-lg text-[var(--text-muted)] font-medium px-2 py-1 rounded-md active:bg-[var(--surface-2)] self-start mt-3 disabled:opacity-60"
             aria-label="Toggle currency"
+            disabled={supportedCurrencies.length < 2}
           >
             {CURRENCY_SYMBOL[currency]}
           </button>
@@ -104,9 +107,11 @@ export function EntryForm({
             className="w-[7ch] min-w-[240px] max-w-[75vw] bg-transparent text-center text-6xl font-semibold text-[var(--text)] outline-none placeholder:text-[var(--text-muted)]/40 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
         </div>
-        <span className="text-xs text-[var(--text-muted)] mt-1">
-          tap {CURRENCY_SYMBOL[currency]} to switch currency
-        </span>
+        {supportedCurrencies.length > 1 && (
+          <span className="text-xs text-[var(--text-muted)] mt-1">
+            tap {CURRENCY_SYMBOL[currency]} to switch currency
+          </span>
+        )}
       </div>
 
       {/* Category */}

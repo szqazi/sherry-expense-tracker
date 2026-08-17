@@ -1,4 +1,4 @@
-export type Currency = "PKR" | "EUR";
+export type Currency = "PKR" | "EUR" | "USD" | "SAR" | "CAD" | "AUD" | "GBP";
 
 export type EntryType = "expense" | "income";
 
@@ -45,6 +45,6 @@ export interface Settings {
   gender: Gender | null;
   dateOfBirth: string | null;
   theme: ThemeMode;
-  defaultCurrency: Currency;
-  exchangeRateEurToPkr: number;
+  supportedCurrencies: Currency[];
+  exchangeRates: Record<Currency, number>;
 }

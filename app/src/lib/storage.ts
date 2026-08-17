@@ -1,3 +1,4 @@
+import { DEFAULT_EXCHANGE_RATES } from "./currency";
 import type { Entry, Settings } from "./types";
 
 const ENTRIES_KEY = "sherry-expenses:entries";
@@ -8,8 +9,8 @@ export const DEFAULT_SETTINGS: Settings = {
   gender: null,
   dateOfBirth: null,
   theme: "dark",
-  defaultCurrency: "PKR",
-  exchangeRateEurToPkr: 310,
+  supportedCurrencies: ["PKR", "EUR"],
+  exchangeRates: DEFAULT_EXCHANGE_RATES,
 };
 
 export function loadEntries(): Entry[] {
@@ -33,7 +34,11 @@ export function loadSettings(): Settings {
     const raw = localStorage.getItem(SETTINGS_KEY);
     if (!raw) return { ...DEFAULT_SETTINGS };
     const parsed = JSON.parse(raw);
-    return { ...DEFAULT_SETTINGS, ...parsed };
+    return {
+      ...DEFAULT_SETTINGS,
+      ...parsed,
+      exchangeRates: { ...DEFAULT_SETTINGS.exchangeRates, ...parsed.exchangeRates },
+    };
   } catch {
     return { ...DEFAULT_SETTINGS };
   }

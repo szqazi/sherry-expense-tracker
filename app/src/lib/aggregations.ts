@@ -2,8 +2,8 @@ import { NON_PK_EXPENSE_CATEGORIES, PK_EXPENSE_CATEGORIES } from "./categories";
 import { convert } from "./currency";
 import type { Currency, Entry } from "./types";
 
-export function amountIn(entry: Entry, display: Currency, rate: number): number {
-  return convert(entry.amount, entry.currency, display, rate);
+export function amountIn(entry: Entry, display: Currency, rates: Record<Currency, number>): number {
+  return convert(entry.amount, entry.currency, display, rates);
 }
 
 export function entriesForMonth(entries: Entry[], year: number, monthIndex: number): Entry[] {
@@ -28,12 +28,12 @@ export interface MonthlySummary {
 export function monthlySummary(
   monthEntries: Entry[],
   display: Currency,
-  rate: number,
+  rates: Record<Currency, number>,
 ): MonthlySummary {
   let income = 0;
   let expense = 0;
   for (const e of monthEntries) {
-    const amt = amountIn(e, display, rate);
+    const amt = amountIn(e, display, rates);
     if (e.type === "income") income += amt;
     else expense += amt;
   }
@@ -52,14 +52,14 @@ export interface CategorySlice {
 export function categoryDistribution(
   monthEntries: Entry[],
   display: Currency,
-  rate: number,
+  rates: Record<Currency, number>,
   categoriesFilter: string[],
 ): CategorySlice[] {
   const totals = new Map<string, number>();
   for (const e of monthEntries) {
     if (e.type !== "expense") continue;
     if (!categoriesFilter.includes(e.category)) continue;
-    const amt = amountIn(e, display, rate);
+    const amt = amountIn(e, display, rates);
     totals.set(e.category, (totals.get(e.category) ?? 0) + amt);
   }
   const total = [...totals.values()].reduce((a, b) => a + b, 0);
@@ -72,12 +72,20 @@ export function categoryDistribution(
     .sort((a, b) => b.amount - a.amount);
 }
 
-export function expenseDistribution(monthEntries: Entry[], display: Currency, rate: number) {
-  return categoryDistribution(monthEntries, display, rate, NON_PK_EXPENSE_CATEGORIES);
+export function expenseDistribution(
+  monthEntries: Entry[],
+  display: Currency,
+  rates: Record<Currency, number>,
+) {
+  return categoryDistribution(monthEntries, display, rates, NON_PK_EXPENSE_CATEGORIES);
 }
 
-export function pkExpenseDistribution(monthEntries: Entry[], display: Currency, rate: number) {
-  return categoryDistribution(monthEntries, display, rate, PK_EXPENSE_CATEGORIES);
+export function pkExpenseDistribution(
+  monthEntries: Entry[],
+  display: Currency,
+  rates: Record<Currency, number>,
+) {
+  return categoryDistribution(monthEntries, display, rates, PK_EXPENSE_CATEGORIES);
 }
 
 export interface MonthPoint {
@@ -100,7 +108,7 @@ export interface YearlyOverview {
 export function yearlyOverview(
   yearEntries: Entry[],
   display: Currency,
-  rate: number,
+  rates: Record<Currency, number>,
 ): YearlyOverview {
   const months: MonthPoint[] = Array.from({ length: 12 }, (_, i) => ({
     monthIndex: i,
@@ -111,7 +119,7 @@ export function yearlyOverview(
 
   for (const e of yearEntries) {
     const d = new Date(e.date + "T00:00:00");
-    const amt = amountIn(e, display, rate);
+    const amt = amountIn(e, display, rates);
     const m = months[d.getMonth()];
     if (e.type === "income") m.income += amt;
     else m.expense += amt;
