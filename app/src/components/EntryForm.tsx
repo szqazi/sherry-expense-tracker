@@ -1,11 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { CURRENCY_SYMBOL, nextCurrency } from "../lib/currency";
-import {
-  DEFAULT_EXPENSE_CATEGORY,
-  DEFAULT_INCOME_CATEGORY,
-  EXPENSE_CATEGORIES,
-  INCOME_CATEGORIES,
-} from "../lib/categories";
+import { DEFAULT_EXPENSE_CATEGORY, DEFAULT_INCOME_CATEGORY, INCOME_CATEGORIES } from "../lib/categories";
 import { todayStr } from "../lib/dateUtils";
 import type { Category, Currency, Entry, EntryType } from "../lib/types";
 
@@ -22,6 +17,7 @@ interface EntryFormProps {
   initial?: Entry;
   currency: Currency;
   supportedCurrencies: Currency[];
+  expenseCategories: string[];
   onCurrencyChange: (c: Currency) => void;
   onSubmit: (values: EntryFormValues) => void;
   onValidationError: (message: string) => void;
@@ -33,26 +29,34 @@ export function EntryForm({
   initial,
   currency,
   supportedCurrencies,
+  expenseCategories,
   onCurrencyChange,
   onSubmit,
   onValidationError,
   submitLabelPrefix,
   extraActions,
 }: EntryFormProps) {
+  const defaultExpenseCategory = expenseCategories.includes(DEFAULT_EXPENSE_CATEGORY)
+    ? DEFAULT_EXPENSE_CATEGORY
+    : (expenseCategories[0] ?? DEFAULT_EXPENSE_CATEGORY);
+
   const [type, setType] = useState<EntryType>(initial?.type ?? "expense");
-  const [category, setCategory] = useState<Category>(
-    initial?.category ?? DEFAULT_EXPENSE_CATEGORY,
-  );
+  const [category, setCategory] = useState<Category>(initial?.category ?? defaultExpenseCategory);
   const [amount, setAmount] = useState(initial ? String(initial.amount) : "");
   const [comment, setComment] = useState(initial?.comment ?? "");
   const [date, setDate] = useState(initial?.date ?? todayStr());
 
-  const categories = type === "expense" ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
+  const categories =
+    type === "expense"
+      ? initial && initial.type === "expense" && !expenseCategories.includes(initial.category)
+        ? [initial.category, ...expenseCategories]
+        : expenseCategories
+      : INCOME_CATEGORIES;
 
   function handleTypeChange(next: EntryType) {
     setType(next);
     if (!initial) {
-      setCategory(next === "expense" ? DEFAULT_EXPENSE_CATEGORY : DEFAULT_INCOME_CATEGORY);
+      setCategory(next === "expense" ? defaultExpenseCategory : DEFAULT_INCOME_CATEGORY);
     }
   }
 

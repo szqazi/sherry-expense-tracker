@@ -43,6 +43,7 @@ export function EditEntryScreen({ entry, onDone }: EditEntryScreenProps) {
         initial={entry}
         currency={currency}
         supportedCurrencies={currencyOptions}
+        expenseCategories={settings.expenseCategories}
         onCurrencyChange={setCurrency}
         onSubmit={setPendingValues}
         onValidationError={(message) => setToast({ kind: "error", message })}

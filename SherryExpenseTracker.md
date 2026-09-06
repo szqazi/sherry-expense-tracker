@@ -90,9 +90,21 @@ The default mode (Home Screen) should be the Entry Mode
 
 &#x09;	\* "Monthly Summary": Ring Graph showing Total Income, the % Expenses and % Savings
 
-&#x09;	\* "Expense Distribution":
+&#x09;	\* "Expense Distribution":  It should consider ALL expenses categories
 
 &#x09;	\* "PK Expense Distribution": It should consider all expenses categories other than "DE" and "DE Air Ticket"
+
+&#x09;	\* "Expenses variation on Days": A bar graph showing the expenses on each day
+
+&#x09;		\* expense on y-axis and date on x-axis
+
+&#x09;		\* It should be possible to toggle this view for either a week or a month
+
+&#x09;		\* for week starts on Mon and Ends on Sunday, for month start on 1st and end on 30th/31st
+
+&#x09;		\* it should be possible to swipe the screen and go from one week / month to the other
+
+&#x09;		\* Weekdays should be in one colour and weekend in another 
 
 &#x09;	\* "Yearly Overview":
 
@@ -128,6 +140,14 @@ The default mode (Home Screen) should be the Entry Mode
 
 &#x09;\* On the right hand side of the entry there should be an edit icon, clicking on it will allow the user to edit the entry (same way as entering data in the first instance)
 
+&#x09;\* It should be possible to filter expenses based on
+
+&#x09;	\* Date Range (To and From)
+
+&#x09;	\* Expense Categories
+
+&#x09;	\* Comment
+
 
 
 ### Expense Categories:
@@ -145,6 +165,8 @@ The default mode (Home Screen) should be the Entry Mode
 &#x09;\* PK Bills
 
 &#x09;\* PK Groceries
+
+&#x09;\* PK Dine Out / Delivery
 
 &#x09;\* PK Others
 
@@ -205,6 +227,8 @@ Under Setting there should be:
 &#x09;	\* Theme. Toggle Dark / Light Mode
 
 &#x09;	\* Currencies: (default is PKR and EUR). Supported currencies are Rs, EUR, USD, Saudi Riyal, Canadian Dollar, Australian Dollar, GBP
+
+&#x09;\* Expense Categories: Here it be possible to add / delete Expense Categories.
 
 &#x09;\* Export Data
 

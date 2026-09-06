@@ -1,4 +1,5 @@
 import { DEFAULT_EXCHANGE_RATES } from "./currency";
+import { DEFAULT_EXPENSE_CATEGORIES } from "./categories";
 import type { Entry, Settings } from "./types";
 
 const ENTRIES_KEY = "sherry-expenses:entries";
@@ -11,6 +12,7 @@ export const DEFAULT_SETTINGS: Settings = {
   theme: "dark",
   supportedCurrencies: ["PKR", "EUR"],
   exchangeRates: DEFAULT_EXCHANGE_RATES,
+  expenseCategories: DEFAULT_EXPENSE_CATEGORIES,
 };
 
 export function loadEntries(): Entry[] {

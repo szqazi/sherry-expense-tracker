@@ -1,5 +1,6 @@
-import { NON_PK_EXPENSE_CATEGORIES, PK_EXPENSE_CATEGORIES } from "./categories";
+import { DE_EXPENSE_CATEGORIES } from "./categories";
 import { convert } from "./currency";
+import { toDateStr } from "./dateUtils";
 import type { Currency, Entry } from "./types";
 
 export function amountIn(entry: Entry, display: Currency, rates: Record<Currency, number>): number {
@@ -53,12 +54,12 @@ export function categoryDistribution(
   monthEntries: Entry[],
   display: Currency,
   rates: Record<Currency, number>,
-  categoriesFilter: string[],
+  excludeCategories: string[] = [],
 ): CategorySlice[] {
   const totals = new Map<string, number>();
   for (const e of monthEntries) {
     if (e.type !== "expense") continue;
-    if (!categoriesFilter.includes(e.category)) continue;
+    if (excludeCategories.includes(e.category)) continue;
     const amt = amountIn(e, display, rates);
     totals.set(e.category, (totals.get(e.category) ?? 0) + amt);
   }
@@ -77,7 +78,7 @@ export function expenseDistribution(
   display: Currency,
   rates: Record<Currency, number>,
 ) {
-  return categoryDistribution(monthEntries, display, rates, NON_PK_EXPENSE_CATEGORIES);
+  return categoryDistribution(monthEntries, display, rates, []);
 }
 
 export function pkExpenseDistribution(
@@ -85,7 +86,7 @@ export function pkExpenseDistribution(
   display: Currency,
   rates: Record<Currency, number>,
 ) {
-  return categoryDistribution(monthEntries, display, rates, PK_EXPENSE_CATEGORIES);
+  return categoryDistribution(monthEntries, display, rates, DE_EXPENSE_CATEGORIES);
 }
 
 export interface MonthPoint {
@@ -159,4 +160,43 @@ export function yearlyOverview(
     bestMonthIndex,
     worstMonthIndex,
   };
+}
+
+export interface DayPoint {
+  date: string;
+  dayOfMonth: number;
+  expense: number;
+  isWeekend: boolean;
+}
+
+// Inclusive [start, end] range, used by the "Expenses variation on Days" graph.
+export function dailyExpenses(
+  entries: Entry[],
+  start: Date,
+  end: Date,
+  display: Currency,
+  rates: Record<Currency, number>,
+): DayPoint[] {
+  const totals = new Map<string, number>();
+  for (const e of entries) {
+    if (e.type !== "expense") continue;
+    if (e.date < toDateStr(start) || e.date > toDateStr(end)) continue;
+    const amt = amountIn(e, display, rates);
+    totals.set(e.date, (totals.get(e.date) ?? 0) + amt);
+  }
+
+  const days: DayPoint[] = [];
+  const cursor = new Date(start);
+  while (cursor <= end) {
+    const dateStr = toDateStr(cursor);
+    const dow = cursor.getDay();
+    days.push({
+      date: dateStr,
+      dayOfMonth: cursor.getDate(),
+      expense: totals.get(dateStr) ?? 0,
+      isWeekend: dow === 0 || dow === 6,
+    });
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  return days;
 }

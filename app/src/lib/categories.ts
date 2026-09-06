@@ -1,7 +1,11 @@
-import type { ExpenseCategory, IncomeCategory } from "./types";
+import type { IncomeCategory } from "./types";
 
-export const EXPENSE_CATEGORIES: ExpenseCategory[] = [
+// Seed list used to initialize Settings.expenseCategories on first run.
+// Users can add/delete from Settings > App Settings > Expense Categories
+// afterwards, so this is a starting point, not a fixed set.
+export const DEFAULT_EXPENSE_CATEGORIES: string[] = [
   "PK Groceries",
+  "PK Dine Out / Delivery",
   "PK Rent",
   "PK Maids",
   "PK Bills",
@@ -23,13 +27,9 @@ export const INCOME_CATEGORIES: IncomeCategory[] = [
   "Others",
 ];
 
-export const DEFAULT_EXPENSE_CATEGORY: ExpenseCategory = "PK Groceries";
+export const DEFAULT_EXPENSE_CATEGORY = "PK Groceries";
 export const DEFAULT_INCOME_CATEGORY: IncomeCategory = "Salary";
 
-// "Expense Distribution" covers Germany-related categories; "PK Expense
-// Distribution" covers everything else.
-export const DE_EXPENSE_CATEGORIES: ExpenseCategory[] = ["DE", "DE Air Ticket"];
-export const NON_PK_EXPENSE_CATEGORIES: ExpenseCategory[] = DE_EXPENSE_CATEGORIES;
-export const PK_EXPENSE_CATEGORIES: ExpenseCategory[] = EXPENSE_CATEGORIES.filter(
-  (c) => !DE_EXPENSE_CATEGORIES.includes(c),
-);
+// "PK Expense Distribution" excludes Germany-related categories; "Expense
+// Distribution" covers every expense category with no exclusions.
+export const DE_EXPENSE_CATEGORIES = ["DE", "DE Air Ticket"];

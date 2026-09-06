@@ -5,6 +5,7 @@ import { currentMonthIndex, currentYear, monthLabel } from "../lib/dateUtils";
 import { ALL_CURRENCIES, CURRENCY_LABEL, CURRENCY_SYMBOL } from "../lib/currency";
 import { Toast, type ToastState } from "../components/Toast";
 import { ConfirmDialog } from "../components/ConfirmDialog";
+import { TrashIcon } from "../components/Icons";
 import type { Currency, Gender } from "../lib/types";
 
 const APP_VERSION = "1.0.0";
@@ -16,6 +17,7 @@ export function SettingsScreen() {
   const [exportYear, setExportYear] = useState(currentYear());
   const [exportMonth, setExportMonth] = useState(currentMonthIndex());
   const [confirmAction, setConfirmAction] = useState<"entries" | "personalInfo" | null>(null);
+  const [newCategory, setNewCategory] = useState("");
 
   function handleConfirmDelete() {
     if (confirmAction === "entries") {
@@ -66,6 +68,25 @@ export function SettingsScreen() {
   function handleRateChange(c: Currency, value: string) {
     const numeric = parseFloat(value);
     updateSettings({ exchangeRates: { ...settings.exchangeRates, [c]: Number.isNaN(numeric) ? 0 : numeric } });
+  }
+
+  function handleAddCategory() {
+    const trimmed = newCategory.trim();
+    if (!trimmed) return;
+    if (settings.expenseCategories.some((c) => c.toLowerCase() === trimmed.toLowerCase())) {
+      setToast({ kind: "error", message: "That category already exists." });
+      return;
+    }
+    updateSettings({ expenseCategories: [...settings.expenseCategories, trimmed] });
+    setNewCategory("");
+  }
+
+  function handleDeleteCategory(c: string) {
+    if (settings.expenseCategories.length === 1) {
+      setToast({ kind: "error", message: "At least 1 expense category must stay." });
+      return;
+    }
+    updateSettings({ expenseCategories: settings.expenseCategories.filter((x) => x !== c) });
   }
 
   async function handleShare() {
@@ -193,6 +214,46 @@ export function SettingsScreen() {
               />
             </Field>
           ))}
+      </Section>
+
+      <Section title="Expense Categories">
+        <div className="flex flex-col gap-2">
+          {settings.expenseCategories.map((c) => (
+            <div
+              key={c}
+              className="flex items-center justify-between bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-2.5"
+            >
+              <span className="text-sm text-[var(--text)]">{c}</span>
+              <button
+                onClick={() => handleDeleteCategory(c)}
+                className="w-7 h-7 flex items-center justify-center rounded-full text-[var(--text-muted)] active:bg-[var(--surface-2)]"
+                style={{ color: "var(--danger)" }}
+                aria-label={`Delete ${c}`}
+              >
+                <TrashIcon className="w-4 h-4" />
+              </button>
+            </div>
+          ))}
+        </div>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={newCategory}
+            onChange={(e) => setNewCategory(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleAddCategory();
+            }}
+            placeholder="New category name"
+            className="flex-1 bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text)] outline-none focus:border-[var(--accent)] text-sm"
+          />
+          <button
+            onClick={handleAddCategory}
+            className="px-4 rounded-xl text-sm font-semibold text-white active:opacity-80"
+            style={{ background: "var(--accent)" }}
+          >
+            Add
+          </button>
+        </div>
       </Section>
 
       <Section title="Export Data">

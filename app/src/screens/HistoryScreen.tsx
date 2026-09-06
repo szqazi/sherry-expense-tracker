@@ -1,7 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useApp } from "../lib/AppContext";
 import { formatAmount } from "../lib/currency";
-import { EditIcon } from "../components/Icons";
+import { EditIcon, FilterIcon } from "../components/Icons";
 import type { Entry } from "../lib/types";
 
 interface HistoryScreenProps {
@@ -23,12 +23,44 @@ function groupLabel(date: string): string {
   });
 }
 
+interface Filters {
+  dateFrom: string;
+  dateTo: string;
+  category: string;
+  comment: string;
+}
+
+const EMPTY_FILTERS: Filters = { dateFrom: "", dateTo: "", category: "", comment: "" };
+
 export function HistoryScreen({ onEdit }: HistoryScreenProps) {
   const { entries } = useApp();
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
+
+  const activeFilterCount = [filters.dateFrom, filters.dateTo, filters.category, filters.comment.trim()].filter(
+    Boolean,
+  ).length;
+
+  const allCategories = useMemo(
+    () => [...new Set(entries.map((e) => e.category))].sort((a, b) => a.localeCompare(b)),
+    [entries],
+  );
+
+  const filtered = useMemo(() => {
+    return entries.filter((e) => {
+      if (filters.dateFrom && e.date < filters.dateFrom) return false;
+      if (filters.dateTo && e.date > filters.dateTo) return false;
+      if (filters.category && e.category !== filters.category) return false;
+      if (filters.comment.trim() && !e.comment.toLowerCase().includes(filters.comment.trim().toLowerCase())) {
+        return false;
+      }
+      return true;
+    });
+  }, [entries, filters]);
 
   const sorted = useMemo(
-    () => [...entries].sort((a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt)),
-    [entries],
+    () => [...filtered].sort((a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt)),
+    [filtered],
   );
 
   const groups = useMemo(() => {
@@ -43,8 +75,84 @@ export function HistoryScreen({ onEdit }: HistoryScreenProps) {
 
   return (
     <div className="flex-1 flex flex-col px-5 pb-6">
-      {entries.length === 0 ? (
-        <p className="text-sm text-[var(--text-muted)] mt-16 text-center">No entries yet.</p>
+      <div className="flex items-center justify-between mt-1 mb-1">
+        <button
+          onClick={() => setShowFilters((v) => !v)}
+          className="flex items-center gap-1.5 text-sm font-medium text-[var(--text)] px-3 py-2 rounded-full bg-[var(--surface)] border border-[var(--border)] active:bg-[var(--surface-2)]"
+        >
+          <FilterIcon className="w-4 h-4" />
+          Filter
+          {activeFilterCount > 0 && (
+            <span
+              className="w-4 h-4 flex items-center justify-center rounded-full text-[10px] font-semibold text-white"
+              style={{ background: "var(--accent)" }}
+            >
+              {activeFilterCount}
+            </span>
+          )}
+        </button>
+        {activeFilterCount > 0 && (
+          <button
+            onClick={() => setFilters(EMPTY_FILTERS)}
+            className="text-xs text-[var(--text-muted)] px-2 py-1"
+          >
+            Clear filters
+          </button>
+        )}
+      </div>
+
+      {showFilters && (
+        <div className="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-4 mb-3 flex flex-col gap-3">
+          <div className="flex gap-2">
+            <FilterField label="From">
+              <input
+                type="date"
+                value={filters.dateFrom}
+                max={filters.dateTo || undefined}
+                onChange={(e) => setFilters((f) => ({ ...f, dateFrom: e.target.value }))}
+                className="w-full bg-[var(--surface-2)] border border-[var(--border)] rounded-lg px-2.5 py-2 text-[var(--text)] outline-none text-xs"
+              />
+            </FilterField>
+            <FilterField label="To">
+              <input
+                type="date"
+                value={filters.dateTo}
+                min={filters.dateFrom || undefined}
+                onChange={(e) => setFilters((f) => ({ ...f, dateTo: e.target.value }))}
+                className="w-full bg-[var(--surface-2)] border border-[var(--border)] rounded-lg px-2.5 py-2 text-[var(--text)] outline-none text-xs"
+              />
+            </FilterField>
+          </div>
+          <FilterField label="Category">
+            <select
+              value={filters.category}
+              onChange={(e) => setFilters((f) => ({ ...f, category: e.target.value }))}
+              className="w-full bg-[var(--surface-2)] border border-[var(--border)] rounded-lg px-2.5 py-2 text-[var(--text)] outline-none text-xs"
+            >
+              <option value="">All categories</option>
+              {allCategories.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+          </FilterField>
+          <FilterField label="Comment contains">
+            <input
+              type="text"
+              value={filters.comment}
+              onChange={(e) => setFilters((f) => ({ ...f, comment: e.target.value }))}
+              placeholder="Search comments…"
+              className="w-full bg-[var(--surface-2)] border border-[var(--border)] rounded-lg px-2.5 py-2 text-[var(--text)] outline-none text-xs placeholder:text-[var(--text-muted)]/60"
+            />
+          </FilterField>
+        </div>
+      )}
+
+      {sorted.length === 0 ? (
+        <p className="text-sm text-[var(--text-muted)] mt-16 text-center">
+          {entries.length === 0 ? "No entries yet." : "No entries match your filters."}
+        </p>
       ) : (
         <div className="flex flex-col gap-5 mt-1">
           {groups.map(([label, groupEntries]) => (
@@ -61,6 +169,15 @@ export function HistoryScreen({ onEdit }: HistoryScreenProps) {
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+function FilterField({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex-1 min-w-0">
+      <label className="block text-[10px] uppercase tracking-wide text-[var(--text-muted)] mb-1">{label}</label>
+      {children}
     </div>
   );
 }

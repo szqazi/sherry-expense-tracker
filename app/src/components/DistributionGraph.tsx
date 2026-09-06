@@ -20,13 +20,13 @@ const PALETTE = [
   "#38bdf8",
 ];
 
-export function DistributionGraph({ categories }: { categories: string[] }) {
+export function DistributionGraph({ excludeCategories = [] }: { excludeCategories?: string[] }) {
   const { entries, currency, settings } = useApp();
   const [year, setYear] = useState(currentYear());
   const [monthIndex, setMonthIndex] = useState(currentMonthIndex());
 
   const monthEntries = entriesForMonth(entries, year, monthIndex);
-  const slices = categoryDistribution(monthEntries, currency, settings.exchangeRates, categories);
+  const slices = categoryDistribution(monthEntries, currency, settings.exchangeRates, excludeCategories);
   const total = slices.reduce((a, s) => a + s.amount, 0);
 
   return (
@@ -34,7 +34,7 @@ export function DistributionGraph({ categories }: { categories: string[] }) {
       <MonthPicker year={year} monthIndex={monthIndex} onChange={(y, m) => { setYear(y); setMonthIndex(m); }} />
 
       {slices.length === 0 ? (
-        <p className="text-sm text-[var(--text-muted)] mt-16">No expenses in this category group for this month.</p>
+        <p className="text-sm text-[var(--text-muted)] mt-16">No expenses for this month.</p>
       ) : (
         <>
           <div className="relative w-[220px] h-[220px]">

@@ -2,17 +2,19 @@ import { useState } from "react";
 import { MonthlySummaryGraph } from "../components/MonthlySummaryGraph";
 import { DistributionGraph } from "../components/DistributionGraph";
 import { YearlyOverviewGraph } from "../components/YearlyOverviewGraph";
-import { NON_PK_EXPENSE_CATEGORIES, PK_EXPENSE_CATEGORIES } from "../lib/categories";
+import { DailyExpenseGraph } from "../components/DailyExpenseGraph";
+import { DE_EXPENSE_CATEGORIES } from "../lib/categories";
 import { CloseIcon } from "../components/Icons";
 import { useApp } from "../lib/AppContext";
 import { CURRENCY_SYMBOL, nextCurrency } from "../lib/currency";
 
-type GraphKey = "summary" | "expense" | "pkExpense" | "yearly";
+type GraphKey = "summary" | "expense" | "pkExpense" | "daily" | "yearly";
 
 const CARDS: { key: GraphKey; title: string; hint: string }[] = [
   { key: "summary", title: "Monthly Summary", hint: "Income · Expense · Savings" },
-  { key: "expense", title: "Expense Distribution", hint: "DE categories" },
+  { key: "expense", title: "Expense Distribution", hint: "All categories" },
   { key: "pkExpense", title: "PK Expense Distribution", hint: "Everything except DE" },
+  { key: "daily", title: "Expenses variation on Days", hint: "Daily expenses by week/month" },
   { key: "yearly", title: "Yearly Overview", hint: "Totals & monthly trend" },
 ];
 
@@ -63,8 +65,9 @@ export function OverviewScreen() {
             </div>
             <div className="flex-1 overflow-y-auto pb-8">
               {open === "summary" && <MonthlySummaryGraph />}
-              {open === "expense" && <DistributionGraph categories={NON_PK_EXPENSE_CATEGORIES} />}
-              {open === "pkExpense" && <DistributionGraph categories={PK_EXPENSE_CATEGORIES} />}
+              {open === "expense" && <DistributionGraph />}
+              {open === "pkExpense" && <DistributionGraph excludeCategories={DE_EXPENSE_CATEGORIES} />}
+              {open === "daily" && <DailyExpenseGraph />}
               {open === "yearly" && <YearlyOverviewGraph />}
             </div>
           </div>

@@ -28,6 +28,7 @@ export function EntryScreen() {
         key={formKey}
         currency={currency}
         supportedCurrencies={settings.supportedCurrencies}
+        expenseCategories={settings.expenseCategories}
         onCurrencyChange={setCurrency}
         onSubmit={handleSubmit}
         onValidationError={(message) => setToast({ kind: "error", message })}

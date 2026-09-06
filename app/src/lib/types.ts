@@ -2,18 +2,9 @@ export type Currency = "PKR" | "EUR" | "USD" | "SAR" | "CAD" | "AUD" | "GBP";
 
 export type EntryType = "expense" | "income";
 
-export type ExpenseCategory =
-  | "DE"
-  | "Car"
-  | "Health"
-  | "PK Rent"
-  | "PK Maids"
-  | "PK Bills"
-  | "PK Groceries"
-  | "PK Others"
-  | "Family Support"
-  | "DE Air Ticket"
-  | "Spende";
+// User-editable via Settings > App Settings > Expense Categories, so this
+// can't be a fixed literal union — any string the user adds is valid.
+export type ExpenseCategory = string;
 
 export type IncomeCategory =
   | "Salary"
@@ -47,4 +38,5 @@ export interface Settings {
   theme: ThemeMode;
   supportedCurrencies: Currency[];
   exchangeRates: Record<Currency, number>;
+  expenseCategories: string[];
 }
