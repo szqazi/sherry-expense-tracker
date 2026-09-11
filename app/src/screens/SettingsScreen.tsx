@@ -12,7 +12,19 @@ const APP_VERSION = "1.0.0";
 const APP_SHARE_URL = "https://szqazi.github.io/sherry-expense-tracker/";
 
 export function SettingsScreen() {
-  const { settings, updateSettings, entries, deleteAllEntries, deletePersonalInfo, currency } = useApp();
+  const {
+    settings,
+    updateSettings,
+    entries,
+    deleteAllEntries,
+    deletePersonalInfo,
+    currency,
+    syncConfigured,
+    user,
+    syncState,
+    signInWithGoogle,
+    signOutOfSync,
+  } = useApp();
   const [toast, setToast] = useState<ToastState | null>(null);
   const [exportYear, setExportYear] = useState(currentYear());
   const [exportMonth, setExportMonth] = useState(currentMonthIndex());
@@ -106,11 +118,74 @@ export function SettingsScreen() {
     }
   }
 
+  async function handleSignIn() {
+    try {
+      await signInWithGoogle();
+    } catch {
+      setToast({ kind: "error", message: "Couldn't start sign-in. Please try again." });
+    }
+  }
+
+  async function handleSignOut() {
+    try {
+      await signOutOfSync();
+      setToast({ kind: "success", message: "Signed out. Your data stays on this device." });
+    } catch {
+      setToast({ kind: "error", message: "Couldn't sign out. Please try again." });
+    }
+  }
+
   const monthOptions = Array.from({ length: 12 }, (_, i) => i);
 
   return (
     <div className="relative flex flex-col gap-6 pt-1">
       {toast && <Toast toast={toast} onDone={() => setToast(null)} />}
+
+      {syncConfigured && (
+        <Section title="Account">
+          {user ? (
+            <div className="bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3.5">
+              <div className="flex items-center justify-between">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium text-[var(--text)] truncate">{user.email}</div>
+                  <div className="text-xs text-[var(--text-muted)] mt-0.5">
+                    {syncState === "syncing" && "Syncing…"}
+                    {syncState === "synced" && "Synced"}
+                    {syncState === "error" && "Sync error — will retry"}
+                  </div>
+                </div>
+                <span
+                  className="w-2 h-2 rounded-full shrink-0 ml-2"
+                  style={{
+                    background:
+                      syncState === "error" ? "var(--danger)" : syncState === "syncing" ? "#fbbf24" : "var(--income)",
+                  }}
+                />
+              </div>
+              <button
+                onClick={handleSignOut}
+                className="w-full mt-3 py-2.5 rounded-lg text-sm font-medium bg-[var(--surface-2)] text-[var(--text)] active:opacity-80"
+              >
+                Sign out
+              </button>
+            </div>
+          ) : (
+            <div className="bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3.5">
+              <p className="text-sm text-[var(--text)] mb-1">Not synced</p>
+              <p className="text-xs text-[var(--text-muted)] mb-3">
+                Your data stays on this device only. Sign in to back it up and use it on other devices.
+              </p>
+              <button
+                onClick={handleSignIn}
+                className="w-full py-2.5 rounded-lg text-sm font-semibold text-white active:opacity-80"
+                style={{ background: "var(--accent)" }}
+              >
+                Sign in with Google
+              </button>
+            </div>
+          )}
+        </Section>
+      )}
 
       <Section title="Personal Info">
         <Field label="Name">

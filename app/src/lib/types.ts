@@ -25,6 +25,7 @@ export interface Entry {
   comment: string;
   date: string; // yyyy-MM-dd
   createdAt: string; // ISO timestamp
+  updatedAt: string; // ISO timestamp, used to resolve sync merge conflicts
 }
 
 export type ThemeMode = "dark" | "light";
