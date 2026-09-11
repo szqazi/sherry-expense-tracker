@@ -76,7 +76,7 @@ The default mode (Home Screen) should be the Entry Mode
 
 &#x09;	5. Some confirmation regarding successful completion of the operation. If fails to complete, pls inform the User nicely
 
-&#x09;\* Entry field should be highlighted with a border (lighter shade)
+&#x09;\* Entry field should be highlighted with a border (lighter shade). The inside of the border should be filled black (same as the screen around it)
 
 ### Overview Mode:
 

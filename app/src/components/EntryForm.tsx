@@ -108,7 +108,7 @@ export function EntryForm({
             placeholder="0"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            className="w-[7ch] min-w-[240px] max-w-[75vw] rounded-2xl py-2 bg-[var(--surface)] border-2 border-[var(--surface-2)] text-center text-6xl font-semibold text-[var(--text)] outline-none placeholder:text-[var(--text-muted)]/40 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            className="w-[7ch] min-w-[240px] max-w-[75vw] rounded-2xl py-2 bg-[var(--app-bg)] border-2 border-[var(--surface-2)] text-center text-6xl font-semibold text-[var(--text)] outline-none placeholder:text-[var(--text-muted)]/40 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
         </div>
         {supportedCurrencies.length > 1 && (
