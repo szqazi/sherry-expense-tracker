@@ -76,6 +76,8 @@ The default mode (Home Screen) should be the Entry Mode
 
 &#x09;	5. Some confirmation regarding successful completion of the operation. If fails to complete, pls inform the User nicely
 
+&#x09;\* Entry field should be highlighted with a lighter shade background to make it intuitive for user to know where to enter the amount.
+
 
 
 ### Overview Mode:
@@ -92,7 +94,7 @@ The default mode (Home Screen) should be the Entry Mode
 
 &#x09;	\* "Expense Distribution":  It should consider ALL expenses categories
 
-&#x09;	\* "PK Expense Distribution": It should consider all expenses categories other than "DE" and "DE Air Ticket"
+&#x09;	\* "PK Expense Distribution": It should consider all expenses categories other than "DE" and "DE Air Ticket". If I click on any category type in the graph, it should take me to the list of all expenses for that category for that particular month. 
 
 &#x09;	\* "Expenses variation on Days": A bar graph showing the expenses on each day
 
@@ -105,6 +107,8 @@ The default mode (Home Screen) should be the Entry Mode
 &#x09;		\* it should be possible to swipe the screen and go from one week / month to the other
 
 &#x09;		\* Weekdays should be in one colour and weekend in another 
+
+&#x09;		\* Clicking on a specific day should list all the expenses for that specific day
 
 &#x09;	\* "Yearly Overview":
 
@@ -147,6 +151,8 @@ The default mode (Home Screen) should be the Entry Mode
 &#x09;	\* Expense Categories
 
 &#x09;	\* Comment
+
+&#x09;\* It should be possible to go from History mode (back to Edit Mode) without scrolling down past all the entries.
 
 
 

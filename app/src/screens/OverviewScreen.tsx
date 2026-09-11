@@ -7,6 +7,8 @@ import { DE_EXPENSE_CATEGORIES } from "../lib/categories";
 import { CloseIcon } from "../components/Icons";
 import { useApp } from "../lib/AppContext";
 import { CURRENCY_SYMBOL, nextCurrency } from "../lib/currency";
+import { endOfMonth, startOfMonth, toDateStr } from "../lib/dateUtils";
+import type { HistoryFilters } from "./HistoryScreen";
 
 type GraphKey = "summary" | "expense" | "pkExpense" | "daily" | "yearly";
 
@@ -18,9 +20,25 @@ const CARDS: { key: GraphKey; title: string; hint: string }[] = [
   { key: "yearly", title: "Yearly Overview", hint: "Totals & monthly trend" },
 ];
 
-export function OverviewScreen() {
+interface OverviewScreenProps {
+  onDrillDown: (filters: Partial<HistoryFilters>) => void;
+}
+
+export function OverviewScreen({ onDrillDown }: OverviewScreenProps) {
   const [open, setOpen] = useState<GraphKey | null>(null);
   const { currency, setCurrency, settings } = useApp();
+
+  function handleCategoryClick(category: string, year: number, monthIndex: number) {
+    onDrillDown({
+      category,
+      dateFrom: toDateStr(startOfMonth(year, monthIndex)),
+      dateTo: toDateStr(endOfMonth(year, monthIndex)),
+    });
+  }
+
+  function handleDayClick(date: string) {
+    onDrillDown({ dateFrom: date, dateTo: date });
+  }
 
   return (
     <div className="flex-1 flex flex-col px-5 pb-6">
@@ -65,9 +83,11 @@ export function OverviewScreen() {
             </div>
             <div className="flex-1 overflow-y-auto pb-8">
               {open === "summary" && <MonthlySummaryGraph />}
-              {open === "expense" && <DistributionGraph />}
-              {open === "pkExpense" && <DistributionGraph excludeCategories={DE_EXPENSE_CATEGORIES} />}
-              {open === "daily" && <DailyExpenseGraph />}
+              {open === "expense" && <DistributionGraph onCategoryClick={handleCategoryClick} />}
+              {open === "pkExpense" && (
+                <DistributionGraph excludeCategories={DE_EXPENSE_CATEGORIES} onCategoryClick={handleCategoryClick} />
+              )}
+              {open === "daily" && <DailyExpenseGraph onDayClick={handleDayClick} />}
               {open === "yearly" && <YearlyOverviewGraph />}
             </div>
           </div>

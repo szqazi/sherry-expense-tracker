@@ -10,7 +10,11 @@ type Mode = "week" | "month";
 const WEEKEND_COLOR = "#fbbf24";
 const SWIPE_THRESHOLD = 40;
 
-export function DailyExpenseGraph() {
+interface DailyExpenseGraphProps {
+  onDayClick?: (date: string) => void;
+}
+
+export function DailyExpenseGraph({ onDayClick }: DailyExpenseGraphProps) {
   const { entries, currency, settings } = useApp();
   const [mode, setMode] = useState<Mode>("week");
   const [anchor, setAnchor] = useState(() => new Date());
@@ -32,6 +36,7 @@ export function DailyExpenseGraph() {
 
   const chartData = days.map((d) => ({
     label: mode === "week" ? d.date.slice(5).split("-").reverse().join("/") : String(d.dayOfMonth),
+    date: d.date,
     expense: Math.round(d.expense),
     isWeekend: d.isWeekend,
   }));
@@ -128,7 +133,13 @@ export function DailyExpenseGraph() {
               }}
               formatter={(value) => formatAmount(Number(value), currency)}
             />
-            <Bar dataKey="expense" radius={[3, 3, 0, 0]}>
+            <Bar
+              dataKey="expense"
+              radius={[3, 3, 0, 0]}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              onClick={(data: any) => onDayClick?.(data.payload?.date ?? data.date ?? "")}
+              cursor={onDayClick ? "pointer" : undefined}
+            >
               {chartData.map((d, i) => (
                 <Cell key={i} fill={d.isWeekend ? WEEKEND_COLOR : "var(--accent)"} />
               ))}

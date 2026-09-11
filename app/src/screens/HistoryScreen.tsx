@@ -4,10 +4,6 @@ import { formatAmount } from "../lib/currency";
 import { EditIcon, FilterIcon } from "../components/Icons";
 import type { Entry } from "../lib/types";
 
-interface HistoryScreenProps {
-  onEdit: (entry: Entry) => void;
-}
-
 function formatEntryDate(date: string): string {
   return new Date(date + "T00:00:00").toLocaleDateString(undefined, {
     day: "numeric",
@@ -23,19 +19,24 @@ function groupLabel(date: string): string {
   });
 }
 
-interface Filters {
+export interface HistoryFilters {
   dateFrom: string;
   dateTo: string;
   category: string;
   comment: string;
 }
 
-const EMPTY_FILTERS: Filters = { dateFrom: "", dateTo: "", category: "", comment: "" };
+const EMPTY_FILTERS: HistoryFilters = { dateFrom: "", dateTo: "", category: "", comment: "" };
 
-export function HistoryScreen({ onEdit }: HistoryScreenProps) {
+interface HistoryScreenProps {
+  onEdit: (entry: Entry) => void;
+  initialFilters?: Partial<HistoryFilters>;
+}
+
+export function HistoryScreen({ onEdit, initialFilters }: HistoryScreenProps) {
   const { entries } = useApp();
-  const [showFilters, setShowFilters] = useState(false);
-  const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
+  const [showFilters, setShowFilters] = useState(() => Boolean(initialFilters));
+  const [filters, setFilters] = useState<HistoryFilters>(() => ({ ...EMPTY_FILTERS, ...initialFilters }));
 
   const activeFilterCount = [filters.dateFrom, filters.dateTo, filters.category, filters.comment.trim()].filter(
     Boolean,

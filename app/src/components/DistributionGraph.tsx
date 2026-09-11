@@ -20,7 +20,12 @@ const PALETTE = [
   "#38bdf8",
 ];
 
-export function DistributionGraph({ excludeCategories = [] }: { excludeCategories?: string[] }) {
+interface DistributionGraphProps {
+  excludeCategories?: string[];
+  onCategoryClick?: (category: string, year: number, monthIndex: number) => void;
+}
+
+export function DistributionGraph({ excludeCategories = [], onCategoryClick }: DistributionGraphProps) {
   const { entries, currency, settings } = useApp();
   const [year, setYear] = useState(currentYear());
   const [monthIndex, setMonthIndex] = useState(currentMonthIndex());
@@ -63,7 +68,12 @@ export function DistributionGraph({ excludeCategories = [] }: { excludeCategorie
 
           <div className="w-full mt-6 flex flex-col gap-2.5">
             {slices.map((s, i) => (
-              <div key={s.category} className="flex items-center justify-between text-sm">
+              <button
+                key={s.category}
+                onClick={() => onCategoryClick?.(s.category, year, monthIndex)}
+                disabled={!onCategoryClick}
+                className="flex items-center justify-between text-sm text-left w-full rounded-lg -mx-1 px-1 py-0.5 active:bg-[var(--surface-2)] disabled:active:bg-transparent"
+              >
                 <div className="flex items-center gap-2 min-w-0">
                   <span
                     className="w-2.5 h-2.5 rounded-full shrink-0"
@@ -75,7 +85,7 @@ export function DistributionGraph({ excludeCategories = [] }: { excludeCategorie
                   <span className="text-[var(--text-muted)]">{s.pct.toFixed(0)}%</span>
                   <span className="text-[var(--text)] font-medium">{formatAmount(s.amount, currency)}</span>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </>
