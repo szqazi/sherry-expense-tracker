@@ -137,6 +137,8 @@ export function DailyExpenseGraph({ onDayClick }: DailyExpenseGraphProps) {
                 borderRadius: 8,
                 fontSize: 12,
               }}
+              labelStyle={{ color: "var(--text)", fontWeight: 600, marginBottom: 4 }}
+              itemStyle={{ color: "var(--text)" }}
               formatter={(value) => formatAmount(Number(value), currency)}
             />
             <Bar

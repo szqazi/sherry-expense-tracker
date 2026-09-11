@@ -73,6 +73,8 @@ export function YearlyOverviewGraph() {
                 borderRadius: 8,
                 fontSize: 12,
               }}
+              labelStyle={{ color: "var(--text)", fontWeight: 600, marginBottom: 4 }}
+              itemStyle={{ color: "var(--text)" }}
               formatter={(value) => formatAmount(Number(value), currency)}
             />
             <Bar dataKey="Income" radius={[3, 3, 0, 0]}>
