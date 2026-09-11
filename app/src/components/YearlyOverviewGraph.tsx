@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useApp } from "../lib/AppContext";
 import { entriesForYear, yearlyOverview } from "../lib/aggregations";
-import { formatAmount } from "../lib/currency";
+import { formatAmount, formatCompactNumber } from "../lib/currency";
 import { currentYear, monthLabel } from "../lib/dateUtils";
 import { YearPicker } from "./MonthPicker";
 
@@ -48,7 +48,7 @@ export function YearlyOverviewGraph() {
 
       <div className="w-full h-[260px]">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData} barGap={2} margin={{ left: -20 }}>
+          <BarChart data={chartData} barGap={2} margin={{ left: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
             <XAxis
               dataKey="name"
@@ -58,7 +58,13 @@ export function YearlyOverviewGraph() {
               axisLine={{ stroke: "var(--border)" }}
               tickLine={false}
             />
-            <YAxis tick={{ fill: "var(--text-muted)", fontSize: 10 }} axisLine={false} tickLine={false} width={40} />
+            <YAxis
+              tick={{ fill: "var(--text-muted)", fontSize: 10 }}
+              axisLine={false}
+              tickLine={false}
+              width={36}
+              tickFormatter={formatCompactNumber}
+            />
             <Tooltip
               cursor={{ fill: "var(--surface-2)" }}
               contentStyle={{

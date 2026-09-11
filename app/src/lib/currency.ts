@@ -60,3 +60,9 @@ export function nextCurrency(current: Currency, supported: Currency[]): Currency
   const idx = supported.indexOf(current);
   return supported[(idx + 1) % supported.length];
 }
+
+// Short axis-tick labels for large amounts (e.g. 60000 -> "60K") so a
+// narrow chart y-axis never has to clip full numbers to fit.
+export function formatCompactNumber(value: number): string {
+  return new Intl.NumberFormat(undefined, { notation: "compact", maximumFractionDigits: 1 }).format(value);
+}

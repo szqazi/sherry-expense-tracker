@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useApp } from "../lib/AppContext";
 import { dailyExpenses } from "../lib/aggregations";
-import { formatAmount } from "../lib/currency";
+import { formatAmount, formatCompactNumber } from "../lib/currency";
 import { endOfMonth, endOfWeek, monthLabel, startOfMonth, startOfWeek, weekRangeLabel } from "../lib/dateUtils";
 
 type Mode = "week" | "month";
@@ -113,7 +113,7 @@ export function DailyExpenseGraph({ onDayClick }: DailyExpenseGraphProps) {
 
       <div className="w-full h-[240px]" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData} margin={{ left: -20 }}>
+          <BarChart data={chartData} margin={{ left: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
             <XAxis
               dataKey="label"
@@ -122,7 +122,13 @@ export function DailyExpenseGraph({ onDayClick }: DailyExpenseGraphProps) {
               tickLine={false}
               interval={mode === "month" ? 2 : 0}
             />
-            <YAxis tick={{ fill: "var(--text-muted)", fontSize: 10 }} axisLine={false} tickLine={false} width={40} />
+            <YAxis
+              tick={{ fill: "var(--text-muted)", fontSize: 10 }}
+              axisLine={false}
+              tickLine={false}
+              width={36}
+              tickFormatter={formatCompactNumber}
+            />
             <Tooltip
               cursor={{ fill: "var(--surface-2)" }}
               contentStyle={{
