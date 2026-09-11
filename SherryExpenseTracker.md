@@ -76,9 +76,7 @@ The default mode (Home Screen) should be the Entry Mode
 
 &#x09;	5. Some confirmation regarding successful completion of the operation. If fails to complete, pls inform the User nicely
 
-&#x09;\* Entry field should be highlighted with a lighter shade background to make it intuitive for user to know where to enter the amount.
-
-
+&#x09;\* Entry field should be highlighted with a border (lighter shade)
 
 ### Overview Mode:
 
@@ -152,9 +150,7 @@ The default mode (Home Screen) should be the Entry Mode
 
 &#x09;	\* Comment
 
-&#x09;\* It should be possible to go from History mode (back to Edit Mode) without scrolling down past all the entries.
-
-
+&#x09;\* Similar as on Settings screen, there should be a back button on the History Screen, that takes me back to the previous screen (Either Overview or Edit)
 
 ### Expense Categories:
 

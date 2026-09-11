@@ -17,6 +17,7 @@ const TAB_TITLES: Record<Tab, string> = {
 
 function Shell() {
   const [tab, setTab] = useState<Tab>("entry");
+  const [historyReturnTab, setHistoryReturnTab] = useState<Tab>("entry");
   const [showSettings, setShowSettings] = useState(false);
   const [editingEntry, setEditingEntry] = useState<Entry | null>(null);
   const [historyFilterSeed, setHistoryFilterSeed] = useState<Partial<HistoryFilters> | null>(null);
@@ -26,11 +27,13 @@ function Shell() {
   }
 
   function handleTabChange(next: Tab) {
+    if (next === "history") setHistoryReturnTab(tab);
     setHistoryFilterSeed(null);
     setTab(next);
   }
 
   function handleDrillDown(filters: Partial<HistoryFilters>) {
+    setHistoryReturnTab(tab);
     setHistoryFilterSeed(filters);
     setTab("history");
   }
@@ -46,7 +49,11 @@ function Shell() {
         </>
       ) : (
         <>
-          <TopBar title={TAB_TITLES[tab]} onSettingsClick={() => setShowSettings(true)} />
+          <TopBar
+            title={TAB_TITLES[tab]}
+            onSettingsClick={() => setShowSettings(true)}
+            onBackClick={tab === "history" ? () => setTab(historyReturnTab) : undefined}
+          />
           <div className="flex-1 overflow-y-auto flex flex-col">
             {tab === "entry" && <EntryScreen />}
             {tab === "overview" && <OverviewScreen onDrillDown={handleDrillDown} />}
