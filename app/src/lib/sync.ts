@@ -25,7 +25,9 @@ function entryToRow(entry: Entry, userId: string): EntryRow {
     comment: entry.comment,
     date: entry.date,
     created_at: entry.createdAt,
-    updated_at: entry.updatedAt,
+    // Defensive fallback: a batch upsert plugs an explicit NULL into any
+    // row missing this column (not the DB default), so never send undefined.
+    updated_at: entry.updatedAt ?? entry.createdAt,
   };
 }
 

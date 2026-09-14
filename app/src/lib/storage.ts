@@ -21,7 +21,9 @@ export function loadEntries(): Entry[] {
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
-    return parsed;
+    // Entries saved before `updatedAt` existed are missing it — backfill
+    // from createdAt so sync (which needs it) never sees a gap.
+    return parsed.map((e: Entry) => (e.updatedAt ? e : { ...e, updatedAt: e.createdAt }));
   } catch {
     return [];
   }
