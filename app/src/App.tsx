@@ -41,7 +41,7 @@ function Shell() {
   }
 
   return (
-    <div className="w-full max-w-[480px] min-h-svh flex flex-col bg-[var(--app-bg)] relative">
+    <div className="w-full max-w-[480px] min-h-dvh flex flex-col bg-[var(--app-bg)] relative">
       {showSettings ? (
         <>
           <TopBar title="Settings" onBackClick={() => setShowSettings(false)} />

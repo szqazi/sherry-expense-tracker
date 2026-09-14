@@ -50,7 +50,10 @@ body {
 }
 
 #root {
-  min-height: 100svh;
+  /* dvh (not svh) so the layout tracks the real viewport as the mobile
+     browser's address bar shows/hides on scroll, instead of staying
+     locked to the smaller "chrome visible" height and leaving a gap. */
+  min-height: 100dvh;
   display: flex;
   justify-content: center;
   background: var(--app-bg);

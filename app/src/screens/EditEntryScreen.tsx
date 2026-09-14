@@ -36,7 +36,7 @@ export function EditEntryScreen({ entry, onDone }: EditEntryScreenProps) {
   }
 
   return (
-    <div className="w-full max-w-[480px] min-h-svh flex flex-col bg-[var(--app-bg)] relative mx-auto">
+    <div className="w-full max-w-[480px] min-h-dvh flex flex-col bg-[var(--app-bg)] relative mx-auto">
       <TopBar title="Edit Entry" onBackClick={onDone} />
       {demoMode && <DemoModeBanner onClear={clearDemoData} />}
       {toast && <Toast toast={toast} onDone={() => setToast(null)} />}
