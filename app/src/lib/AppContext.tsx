@@ -24,6 +24,15 @@ import {
 
 export type SyncState = "disabled" | "signed-out" | "syncing" | "synced" | "error";
 
+function describeSyncError(err: unknown): string {
+  if (err && typeof err === "object") {
+    const e = err as { message?: string; code?: string; details?: string; hint?: string };
+    const parts = [e.message, e.code && `code: ${e.code}`, e.details, e.hint].filter(Boolean);
+    if (parts.length > 0) return parts.join(" — ");
+  }
+  return String(err);
+}
+
 interface AppContextValue {
   entries: Entry[];
   addEntry: (entry: Omit<Entry, "id" | "createdAt" | "updatedAt">) => void;
@@ -38,6 +47,7 @@ interface AppContextValue {
   syncConfigured: boolean;
   user: User | null;
   syncState: SyncState;
+  syncErrorMessage: string | null;
   signInWithGoogle: () => Promise<void>;
   signOutOfSync: () => Promise<void>;
 }
@@ -50,6 +60,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [currency, setCurrency] = useState<Currency>(() => loadSettings().supportedCurrencies[0]);
   const [user, setUser] = useState<User | null>(null);
   const [syncState, setSyncState] = useState<SyncState>(syncConfigured ? "signed-out" : "disabled");
+  const [syncErrorMessage, setSyncErrorMessage] = useState<string | null>(null);
   const reconciledForUserId = useRef<string | null>(null);
   const entriesRef = useRef(entries);
   const settingsRef = useRef(settings);
@@ -115,9 +126,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       }
 
       setSyncState("synced");
+      setSyncErrorMessage(null);
     } catch (err) {
       console.error("[sync] reconcile failed", err);
       setSyncState("error");
+      setSyncErrorMessage(describeSyncError(err));
     }
   }, []);
 
@@ -145,8 +158,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setEntries((prev) => [newEntry, ...prev]);
       if (user) {
         pushEntry(newEntry, user.id)
-          .then(() => setSyncState("synced"))
-          .catch((err) => { console.error("[sync] push failed", err); setSyncState("error"); });
+          .then(() => { setSyncState("synced"); setSyncErrorMessage(null); })
+          .catch((err) => { console.error("[sync] push failed", err); setSyncState("error"); setSyncErrorMessage(describeSyncError(err)); });
       }
     },
     [user],
@@ -164,8 +177,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       );
       if (user && updated) {
         pushEntry(updated, user.id)
-          .then(() => setSyncState("synced"))
-          .catch((err) => { console.error("[sync] push failed", err); setSyncState("error"); });
+          .then(() => { setSyncState("synced"); setSyncErrorMessage(null); })
+          .catch((err) => { console.error("[sync] push failed", err); setSyncState("error"); setSyncErrorMessage(describeSyncError(err)); });
       }
     },
     [user],
@@ -176,8 +189,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setEntries((prev) => prev.filter((e) => e.id !== id));
       if (user) {
         deleteRemoteEntry(id)
-          .then(() => setSyncState("synced"))
-          .catch((err) => { console.error("[sync] push failed", err); setSyncState("error"); });
+          .then(() => { setSyncState("synced"); setSyncErrorMessage(null); })
+          .catch((err) => { console.error("[sync] push failed", err); setSyncState("error"); setSyncErrorMessage(describeSyncError(err)); });
       }
     },
     [user],
@@ -188,8 +201,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setEntries([]);
     if (user) {
       Promise.all(idsToDelete.map((id) => deleteRemoteEntry(id)))
-        .then(() => setSyncState("synced"))
-        .catch((err) => { console.error("[sync] push failed", err); setSyncState("error"); });
+        .then(() => { setSyncState("synced"); setSyncErrorMessage(null); })
+        .catch((err) => { console.error("[sync] push failed", err); setSyncState("error"); setSyncErrorMessage(describeSyncError(err)); });
     }
   }, [user, entries]);
 
@@ -199,8 +212,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         const next = { ...prev, ...patch };
         if (user) {
           pushSettings(next, user.id)
-            .then(() => setSyncState("synced"))
-            .catch((err) => { console.error("[sync] push failed", err); setSyncState("error"); });
+            .then(() => { setSyncState("synced"); setSyncErrorMessage(null); })
+            .catch((err) => { console.error("[sync] push failed", err); setSyncState("error"); setSyncErrorMessage(describeSyncError(err)); });
         }
         return next;
       });
@@ -241,6 +254,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       syncConfigured,
       user,
       syncState,
+      syncErrorMessage,
       signInWithGoogle,
       signOutOfSync,
     }),
@@ -254,6 +268,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       updateSettings,
       deletePersonalInfo,
       currency,
+      syncErrorMessage,
       user,
       syncState,
       signInWithGoogle,

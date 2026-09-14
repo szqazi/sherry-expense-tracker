@@ -22,6 +22,7 @@ export function SettingsScreen() {
     syncConfigured,
     user,
     syncState,
+    syncErrorMessage,
     signInWithGoogle,
     signOutOfSync,
   } = useApp();
@@ -135,6 +136,16 @@ export function SettingsScreen() {
     }
   }
 
+  async function handleCopySyncError() {
+    if (!syncErrorMessage) return;
+    try {
+      await navigator.clipboard.writeText(syncErrorMessage);
+      setToast({ kind: "success", message: "Error copied to clipboard." });
+    } catch {
+      setToast({ kind: "error", message: "Couldn't copy. Please select and copy the text manually." });
+    }
+  }
+
   const monthOptions = Array.from({ length: 12 }, (_, i) => i);
 
   return (
@@ -162,6 +173,18 @@ export function SettingsScreen() {
                   }}
                 />
               </div>
+              {syncState === "error" && syncErrorMessage && (
+                <div className="mt-3 bg-[var(--surface-2)] border border-[var(--danger)]/30 rounded-lg p-3">
+                  <p className="text-xs font-mono text-[var(--text)] break-words">{syncErrorMessage}</p>
+                  <button
+                    onClick={handleCopySyncError}
+                    className="mt-2 text-xs font-medium"
+                    style={{ color: "var(--accent)" }}
+                  >
+                    Copy error
+                  </button>
+                </div>
+              )}
               <button
                 onClick={handleSignOut}
                 className="w-full mt-3 py-2.5 rounded-lg text-sm font-medium bg-[var(--surface-2)] text-[var(--text)] active:opacity-80"
