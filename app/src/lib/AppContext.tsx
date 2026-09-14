@@ -50,6 +50,7 @@ interface AppContextValue {
   syncErrorMessage: string | null;
   signInWithGoogle: () => Promise<void>;
   signOutOfSync: () => Promise<void>;
+  switchGoogleAccount: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -230,7 +231,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const base = import.meta.env.BASE_URL ?? "/";
     await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: window.location.origin + base },
+      options: {
+        redirectTo: window.location.origin + base,
+        // Always show Google's account chooser instead of silently
+        // reusing whichever Google session is already active in the
+        // browser — otherwise there's no way to pick a different account.
+        queryParams: { prompt: "select_account" },
+      },
     });
   }, []);
 
@@ -238,6 +245,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (!supabase) return;
     await supabase.auth.signOut();
   }, []);
+
+  const switchGoogleAccount = useCallback(async () => {
+    if (!supabase) return;
+    await supabase.auth.signOut();
+    await signInWithGoogle();
+  }, [signInWithGoogle]);
 
   const value = useMemo(
     () => ({
@@ -257,6 +270,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       syncErrorMessage,
       signInWithGoogle,
       signOutOfSync,
+      switchGoogleAccount,
     }),
     [
       entries,
@@ -273,6 +287,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       syncState,
       signInWithGoogle,
       signOutOfSync,
+      switchGoogleAccount,
     ],
   );
 

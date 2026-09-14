@@ -25,6 +25,7 @@ export function SettingsScreen() {
     syncErrorMessage,
     signInWithGoogle,
     signOutOfSync,
+    switchGoogleAccount,
   } = useApp();
   const [toast, setToast] = useState<ToastState | null>(null);
   const [exportYear, setExportYear] = useState(currentYear());
@@ -136,6 +137,14 @@ export function SettingsScreen() {
     }
   }
 
+  async function handleSwitchAccount() {
+    try {
+      await switchGoogleAccount();
+    } catch {
+      setToast({ kind: "error", message: "Couldn't switch accounts. Please try again." });
+    }
+  }
+
   async function handleCopySyncError() {
     if (!syncErrorMessage) return;
     try {
@@ -185,12 +194,20 @@ export function SettingsScreen() {
                   </button>
                 </div>
               )}
-              <button
-                onClick={handleSignOut}
-                className="w-full mt-3 py-2.5 rounded-lg text-sm font-medium bg-[var(--surface-2)] text-[var(--text)] active:opacity-80"
-              >
-                Sign out
-              </button>
+              <div className="flex gap-2 mt-3">
+                <button
+                  onClick={handleSwitchAccount}
+                  className="flex-1 py-2.5 rounded-lg text-sm font-medium bg-[var(--surface-2)] text-[var(--text)] active:opacity-80"
+                >
+                  Switch account
+                </button>
+                <button
+                  onClick={handleSignOut}
+                  className="flex-1 py-2.5 rounded-lg text-sm font-medium bg-[var(--surface-2)] text-[var(--text)] active:opacity-80"
+                >
+                  Sign out
+                </button>
+              </div>
             </div>
           ) : (
             <div className="bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3.5">
