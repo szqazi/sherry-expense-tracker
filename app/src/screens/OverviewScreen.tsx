@@ -5,6 +5,7 @@ import { YearlyOverviewGraph } from "../components/YearlyOverviewGraph";
 import { DailyExpenseGraph } from "../components/DailyExpenseGraph";
 import { DE_EXPENSE_CATEGORIES } from "../lib/categories";
 import { CloseIcon } from "../components/Icons";
+import { DemoModeBanner } from "../components/DemoModeBanner";
 import { useApp } from "../lib/AppContext";
 import { CURRENCY_SYMBOL, nextCurrency } from "../lib/currency";
 import { endOfMonth, startOfMonth, toDateStr } from "../lib/dateUtils";
@@ -26,7 +27,7 @@ interface OverviewScreenProps {
 
 export function OverviewScreen({ onDrillDown }: OverviewScreenProps) {
   const [open, setOpen] = useState<GraphKey | null>(null);
-  const { currency, setCurrency, settings } = useApp();
+  const { currency, setCurrency, settings, demoMode, clearDemoData } = useApp();
 
   function handleCategoryClick(category: string, year: number, monthIndex: number) {
     onDrillDown({
@@ -81,6 +82,7 @@ export function OverviewScreen({ onDrillDown }: OverviewScreenProps) {
                 </button>
               </div>
             </div>
+            {demoMode && <DemoModeBanner onClear={clearDemoData} />}
             <div className="flex-1 overflow-y-auto pb-8">
               {open === "summary" && <MonthlySummaryGraph />}
               {open === "expense" && <DistributionGraph onCategoryClick={handleCategoryClick} />}

@@ -26,6 +26,9 @@ export function SettingsScreen() {
     signInWithGoogle,
     signOutOfSync,
     switchGoogleAccount,
+    demoMode,
+    loadDemoData,
+    clearDemoData,
   } = useApp();
   const [toast, setToast] = useState<ToastState | null>(null);
   const [exportYear, setExportYear] = useState(currentYear());
@@ -145,6 +148,20 @@ export function SettingsScreen() {
     }
   }
 
+  async function handleLoadDemoData() {
+    try {
+      await loadDemoData();
+      setToast({ kind: "success", message: "Demo data loaded." });
+    } catch {
+      setToast({ kind: "error", message: "Couldn't load demo data. Please try again." });
+    }
+  }
+
+  function handleClearDemoData() {
+    clearDemoData();
+    setToast({ kind: "success", message: "Your real data is back." });
+  }
+
   async function handleCopySyncError() {
     if (!syncErrorMessage) return;
     try {
@@ -213,11 +230,14 @@ export function SettingsScreen() {
             <div className="bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3.5">
               <p className="text-sm text-[var(--text)] mb-1">Not synced</p>
               <p className="text-xs text-[var(--text-muted)] mb-3">
-                Your data stays on this device only. Sign in to back it up and use it on other devices.
+                {demoMode
+                  ? "Sign-in is disabled while viewing demo data. Clear demo data first to sign in."
+                  : "Your data stays on this device only. Sign in to back it up and use it on other devices."}
               </p>
               <button
                 onClick={handleSignIn}
-                className="w-full py-2.5 rounded-lg text-sm font-semibold text-white active:opacity-80"
+                disabled={demoMode}
+                className="w-full py-2.5 rounded-lg text-sm font-semibold text-white active:opacity-80 disabled:opacity-40"
                 style={{ background: "var(--accent)" }}
               >
                 Sign in with Google
@@ -226,6 +246,31 @@ export function SettingsScreen() {
           )}
         </Section>
       )}
+
+      <Section title="Demo Data">
+        {demoMode ? (
+          <button
+            onClick={handleClearDemoData}
+            className="w-full py-3 rounded-xl text-sm font-semibold active:opacity-80"
+            style={{ background: "#fbbf24", color: "#1a1400" }}
+          >
+            Clear Demo Data
+          </button>
+        ) : (
+          <>
+            <button
+              onClick={handleLoadDemoData}
+              className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3.5 text-sm font-medium text-[var(--text)] text-left active:bg-[var(--surface-2)]"
+            >
+              Load Demo Data
+            </button>
+            <p className="text-[11px] text-[var(--text-muted)]">
+              Fills the app with sample entries so you can explore every feature. Your real data is safely tucked
+              away and comes back exactly as it was when you clear demo data.
+            </p>
+          </>
+        )}
+      </Section>
 
       <Section title="Personal Info">
         <Field label="Name">

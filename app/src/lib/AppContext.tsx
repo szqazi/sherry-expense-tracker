@@ -10,7 +10,8 @@ import {
 } from "react";
 import type { User } from "@supabase/supabase-js";
 import type { Currency, Entry, Settings } from "./types";
-import { loadEntries, loadSettings, saveEntries, saveSettings } from "./storage";
+import { enterDemoMode, exitDemoMode, isDemoMode, loadEntries, loadSettings, saveEntries, saveSettings } from "./storage";
+import { generateDemoEntries, generateDemoSettings } from "./demoData";
 import { supabase, syncConfigured } from "./supabase";
 import {
   deleteRemoteEntry,
@@ -51,6 +52,9 @@ interface AppContextValue {
   signInWithGoogle: () => Promise<void>;
   signOutOfSync: () => Promise<void>;
   switchGoogleAccount: () => Promise<void>;
+  demoMode: boolean;
+  loadDemoData: () => Promise<void>;
+  clearDemoData: () => void;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -62,6 +66,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [syncState, setSyncState] = useState<SyncState>(syncConfigured ? "signed-out" : "disabled");
   const [syncErrorMessage, setSyncErrorMessage] = useState<string | null>(null);
+  const [demoMode, setDemoMode] = useState<boolean>(() => isDemoMode());
   const reconciledForUserId = useRef<string | null>(null);
   const entriesRef = useRef(entries);
   const settingsRef = useRef(settings);
@@ -227,7 +232,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [updateSettings]);
 
   const signInWithGoogle = useCallback(async () => {
-    if (!supabase) return;
+    if (!supabase || demoMode) return;
     const base = import.meta.env.BASE_URL ?? "/";
     await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -239,7 +244,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         queryParams: { prompt: "select_account" },
       },
     });
-  }, []);
+  }, [demoMode]);
 
   const signOutOfSync = useCallback(async () => {
     if (!supabase) return;
@@ -251,6 +256,26 @@ export function AppProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
     await signInWithGoogle();
   }, [signInWithGoogle]);
+
+  const loadDemoData = useCallback(async () => {
+    if (user) {
+      // Never let demo data touch a real signed-in cloud account.
+      await signOutOfSync();
+    }
+    const demoEntries = generateDemoEntries();
+    const demoSettings = generateDemoSettings(settingsRef.current.theme);
+    enterDemoMode(entriesRef.current, settingsRef.current, demoEntries, demoSettings);
+    setEntries(demoEntries);
+    setSettings(demoSettings);
+    setDemoMode(true);
+  }, [user, signOutOfSync]);
+
+  const clearDemoData = useCallback(() => {
+    const restored = exitDemoMode();
+    setEntries(restored.entries);
+    setSettings(restored.settings);
+    setDemoMode(false);
+  }, []);
 
   const value = useMemo(
     () => ({
@@ -271,6 +296,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       signInWithGoogle,
       signOutOfSync,
       switchGoogleAccount,
+      demoMode,
+      loadDemoData,
+      clearDemoData,
     }),
     [
       entries,
@@ -288,6 +316,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       signInWithGoogle,
       signOutOfSync,
       switchGoogleAccount,
+      demoMode,
+      loadDemoData,
+      clearDemoData,
     ],
   );
 

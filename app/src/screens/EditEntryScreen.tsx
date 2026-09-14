@@ -4,6 +4,7 @@ import { EntryForm, type EntryFormValues } from "../components/EntryForm";
 import { Toast, type ToastState } from "../components/Toast";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { TopBar } from "../components/TopBar";
+import { DemoModeBanner } from "../components/DemoModeBanner";
 import type { Currency, Entry } from "../lib/types";
 
 interface EditEntryScreenProps {
@@ -12,7 +13,7 @@ interface EditEntryScreenProps {
 }
 
 export function EditEntryScreen({ entry, onDone }: EditEntryScreenProps) {
-  const { updateEntry, deleteEntry, settings } = useApp();
+  const { updateEntry, deleteEntry, settings, demoMode, clearDemoData } = useApp();
   const [currency, setCurrency] = useState<Currency>(entry.currency);
   const [toast, setToast] = useState<ToastState | null>(null);
   const currencyOptions = settings.supportedCurrencies.includes(entry.currency)
@@ -37,6 +38,7 @@ export function EditEntryScreen({ entry, onDone }: EditEntryScreenProps) {
   return (
     <div className="w-full max-w-[480px] min-h-svh flex flex-col bg-[var(--app-bg)] relative mx-auto">
       <TopBar title="Edit Entry" onBackClick={onDone} />
+      {demoMode && <DemoModeBanner onClear={clearDemoData} />}
       {toast && <Toast toast={toast} onDone={() => setToast(null)} />}
 
       <EntryForm

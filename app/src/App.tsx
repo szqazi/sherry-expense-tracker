@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { AppProvider } from "./lib/AppContext";
+import { AppProvider, useApp } from "./lib/AppContext";
 import { BottomNav, type Tab } from "./components/BottomNav";
 import { TopBar } from "./components/TopBar";
+import { DemoModeBanner } from "./components/DemoModeBanner";
 import { EntryScreen } from "./screens/EntryScreen";
 import { OverviewScreen } from "./screens/OverviewScreen";
 import { HistoryScreen, type HistoryFilters } from "./screens/HistoryScreen";
@@ -16,6 +17,7 @@ const TAB_TITLES: Record<Tab, string> = {
 };
 
 function Shell() {
+  const { demoMode, clearDemoData } = useApp();
   const [tab, setTab] = useState<Tab>("entry");
   const [historyReturnTab, setHistoryReturnTab] = useState<Tab>("entry");
   const [showSettings, setShowSettings] = useState(false);
@@ -43,6 +45,7 @@ function Shell() {
       {showSettings ? (
         <>
           <TopBar title="Settings" onBackClick={() => setShowSettings(false)} />
+          {demoMode && <DemoModeBanner onClear={clearDemoData} />}
           <div className="flex-1 overflow-y-auto px-4 pb-6">
             <SettingsScreen />
           </div>
@@ -54,6 +57,7 @@ function Shell() {
             onSettingsClick={() => setShowSettings(true)}
             onBackClick={tab === "history" ? () => setTab(historyReturnTab) : undefined}
           />
+          {demoMode && <DemoModeBanner onClear={clearDemoData} />}
           <div className="flex-1 overflow-y-auto flex flex-col">
             {tab === "entry" && <EntryScreen />}
             {tab === "overview" && <OverviewScreen onDrillDown={handleDrillDown} />}
