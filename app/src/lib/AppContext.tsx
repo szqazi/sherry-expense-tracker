@@ -115,7 +115,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       }
 
       setSyncState("synced");
-    } catch {
+    } catch (err) {
+      console.error("[sync] reconcile failed", err);
       setSyncState("error");
     }
   }, []);
@@ -145,7 +146,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (user) {
         pushEntry(newEntry, user.id)
           .then(() => setSyncState("synced"))
-          .catch(() => setSyncState("error"));
+          .catch((err) => { console.error("[sync] push failed", err); setSyncState("error"); });
       }
     },
     [user],
@@ -164,7 +165,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (user && updated) {
         pushEntry(updated, user.id)
           .then(() => setSyncState("synced"))
-          .catch(() => setSyncState("error"));
+          .catch((err) => { console.error("[sync] push failed", err); setSyncState("error"); });
       }
     },
     [user],
@@ -176,7 +177,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (user) {
         deleteRemoteEntry(id)
           .then(() => setSyncState("synced"))
-          .catch(() => setSyncState("error"));
+          .catch((err) => { console.error("[sync] push failed", err); setSyncState("error"); });
       }
     },
     [user],
@@ -188,7 +189,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (user) {
       Promise.all(idsToDelete.map((id) => deleteRemoteEntry(id)))
         .then(() => setSyncState("synced"))
-        .catch(() => setSyncState("error"));
+        .catch((err) => { console.error("[sync] push failed", err); setSyncState("error"); });
     }
   }, [user, entries]);
 
@@ -199,7 +200,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         if (user) {
           pushSettings(next, user.id)
             .then(() => setSyncState("synced"))
-            .catch(() => setSyncState("error"));
+            .catch((err) => { console.error("[sync] push failed", err); setSyncState("error"); });
         }
         return next;
       });
