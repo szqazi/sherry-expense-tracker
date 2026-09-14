@@ -70,8 +70,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const reconciledForUserId = useRef<string | null>(null);
   const entriesRef = useRef(entries);
   const settingsRef = useRef(settings);
+  const demoModeRef = useRef(demoMode);
   entriesRef.current = entries;
   settingsRef.current = settings;
+  demoModeRef.current = demoMode;
 
   useEffect(() => {
     if (!settings.supportedCurrencies.includes(currency)) {
@@ -95,19 +97,35 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Auth session bootstrap + subscription. Reconciliation (merging local and
   // remote data) runs once per sign-in, guarded by reconciledForUserId so it
   // doesn't re-run on every unrelated context re-render.
+  //
+  // demoModeRef is checked (not the `demoMode` state) so this never needs to
+  // re-subscribe, and always sees the latest value even though this effect
+  // only runs once. This is the hard barrier that keeps a signed-in session
+  // from ever reaching `user` while demo mode is active — any session found
+  // here gets torn down immediately instead. Without this, a session that
+  // becomes active while demo mode is on (e.g. an OAuth redirect completing
+  // late) would let reconcile() run against whatever's currently loaded,
+  // which could be the demo dataset, and push it straight to the real
+  // account.
   useEffect(() => {
     if (!supabase) return;
 
-    supabase.auth.getSession().then(({ data }) => {
-      setUser(data.session?.user ?? null);
-    });
-
-    const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
+    function acceptSession(session: { user: User } | null) {
+      if (session?.user && demoModeRef.current) {
+        supabase!.auth.signOut();
+        return;
+      }
       setUser(session?.user ?? null);
       if (!session?.user) {
         reconciledForUserId.current = null;
         setSyncState("signed-out");
       }
+    }
+
+    supabase.auth.getSession().then(({ data }) => acceptSession(data.session));
+
+    const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
+      acceptSession(session);
     });
 
     return () => subscription.subscription.unsubscribe();
@@ -120,6 +138,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
         pullRemoteEntries(userId),
         pullRemoteSettings(userId),
       ]);
+
+      // Demo mode may have started while that pull was in flight — the local
+      // entries/settings read below would then be the demo dataset, not the
+      // real data this sync is for. Bail out rather than merge and push it.
+      if (demoModeRef.current) {
+        setSyncState("signed-out");
+        return;
+      }
 
       const merged = mergeEntries(entriesRef.current, remoteEntries);
       setEntries(merged);
@@ -141,7 +167,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!user || reconciledForUserId.current === user.id) return;
+    if (!user || demoModeRef.current || reconciledForUserId.current === user.id) return;
     reconciledForUserId.current = user.id;
     reconcile(user.id);
   }, [user, reconcile]);
@@ -151,7 +177,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!user) return;
     function handleOnline() {
-      if (user) reconcile(user.id);
+      if (user && !demoModeRef.current) reconcile(user.id);
     }
     window.addEventListener("online", handleOnline);
     return () => window.removeEventListener("online", handleOnline);
@@ -162,7 +188,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const now = new Date().toISOString();
       const newEntry: Entry = { ...entry, id: crypto.randomUUID(), createdAt: now, updatedAt: now };
       setEntries((prev) => [newEntry, ...prev]);
-      if (user) {
+      if (user && !demoModeRef.current) {
         pushEntry(newEntry, user.id)
           .then(() => { setSyncState("synced"); setSyncErrorMessage(null); })
           .catch((err) => { console.error("[sync] push failed", err); setSyncState("error"); setSyncErrorMessage(describeSyncError(err)); });
@@ -181,7 +207,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           return updated;
         }),
       );
-      if (user && updated) {
+      if (user && updated && !demoModeRef.current) {
         pushEntry(updated, user.id)
           .then(() => { setSyncState("synced"); setSyncErrorMessage(null); })
           .catch((err) => { console.error("[sync] push failed", err); setSyncState("error"); setSyncErrorMessage(describeSyncError(err)); });
@@ -193,7 +219,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const deleteEntry = useCallback(
     (id: string) => {
       setEntries((prev) => prev.filter((e) => e.id !== id));
-      if (user) {
+      if (user && !demoModeRef.current) {
         deleteRemoteEntry(id)
           .then(() => { setSyncState("synced"); setSyncErrorMessage(null); })
           .catch((err) => { console.error("[sync] push failed", err); setSyncState("error"); setSyncErrorMessage(describeSyncError(err)); });
@@ -205,7 +231,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const deleteAllEntries = useCallback(() => {
     const idsToDelete = entries.map((e) => e.id);
     setEntries([]);
-    if (user) {
+    if (user && !demoModeRef.current) {
       Promise.all(idsToDelete.map((id) => deleteRemoteEntry(id)))
         .then(() => { setSyncState("synced"); setSyncErrorMessage(null); })
         .catch((err) => { console.error("[sync] push failed", err); setSyncState("error"); setSyncErrorMessage(describeSyncError(err)); });
@@ -216,7 +242,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     (patch: Partial<Settings>) => {
       setSettings((prev) => {
         const next = { ...prev, ...patch };
-        if (user) {
+        if (user && !demoModeRef.current) {
           pushSettings(next, user.id)
             .then(() => { setSyncState("synced"); setSyncErrorMessage(null); })
             .catch((err) => { console.error("[sync] push failed", err); setSyncState("error"); setSyncErrorMessage(describeSyncError(err)); });
