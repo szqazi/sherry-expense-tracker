@@ -40,7 +40,7 @@ The default mode (Home Screen) should be the Entry Mode
 
 &#x09;\* For History Mode: List of all entries made so far, from latest to oldest
 
-&#x09;\* Two tabs at the bottom, "Entry" and "Overview". Homescreen / startup screen should be showing the Entry Tab.
+&#x09;\* Three tabs at the bottom, "Entry", "Overview" and "History". Homescreen / startup screen should be showing the Entry Tab.
 
 &#x09;\* There should be a Setting (Gear) Icon where the User can update settings for the app
 
@@ -93,6 +93,8 @@ The default mode (Home Screen) should be the Entry Mode
 &#x09;	\* "Expense Distribution":  It should consider ALL expenses categories
 
 &#x09;	\* "PK Expense Distribution": It should consider all expenses categories other than "DE" and "DE Air Ticket". If I click on any category type in the graph, it should take me to the list of all expenses for that category for that particular month.
+
+&#x09;	\* Clicking on a category also works the same way on "Expense Distribution" (not just "PK Expense Distribution")
 
 &#x09;	\* "Expenses variation on Days": A bar graph showing the expenses on each day
 
@@ -214,6 +216,18 @@ The default mode (Home Screen) should be the Entry Mode
 
 Under Setting there should be:
 
+&#x09;\* Demo Data:
+
+&#x09;	\* Load Demo Data: fills the app with sample entries spanning several months, so the user can explore every feature without using real data
+
+&#x09;	\* While viewing demo data, every screen shows a banner making clear this is demo data, with a button to clear it
+
+&#x09;	\* Clear Demo Data: removes the sample entries and restores the user's real data exactly as it was before Demo Data was loaded
+
+&#x09;	\* Sign-in with Google is disabled while viewing demo data, so demo entries can never reach the real cloud account
+
+&#x09;	\* Scan for Leftover Demo Entries: checks the user's real entries for any that match the sample demo data (in case demo data was ever accidentally mixed into the real data), and lets the user review and delete them
+
 &#x09;\* Personal Info:
 
 &#x09;	\* Name:
@@ -233,6 +247,8 @@ Under Setting there should be:
 &#x09;	\* Theme. Toggle Dark / Light Mode
 
 &#x09;	\* Currencies: (default is PKR and EUR). Supported currencies are Rs, EUR, USD, Saudi Riyal, Canadian Dollar, Australian Dollar, GBP
+
+&#x09;	\* Exchange Rate: For the second selected currency, an editable conversion rate to PKR, used to combine both currencies into one total on Overview and exports
 
 &#x09;\* Expense Categories: Here it be possible to add / delete Expense Categories.
 
@@ -261,4 +277,18 @@ Under Setting there should be:
 ### 
 
 an optional Google sign-in in Settings that would sync the entries/settings to a cloud database, so a new phone or a cleared browser wouldn't lose the data
+
+&#x09;\* Switch Account: sign into a different Google account without losing the data currently on the device
+
+&#x09;\* Sign Out: stop syncing and keep using the app with the data that's already on the device
+
+&#x09;\* Sync Status: a visible indicator (Syncing / Synced / Sync error) next to the signed-in account
+
+&#x09;\* Sync Error Detail: if a sync fails, show the actual error with a "Copy error" button, so it can be reported without needing developer tools
+
+##### PWA / Offline Support —
+
+### 
+
+the app is installable to the home screen like a native app, and continues to work (viewing and adding entries) without an internet connection
 
