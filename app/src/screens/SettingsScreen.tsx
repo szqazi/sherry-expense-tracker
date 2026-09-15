@@ -5,8 +5,10 @@ import { currentMonthIndex, currentYear, monthLabel } from "../lib/dateUtils";
 import { ALL_CURRENCIES, CURRENCY_LABEL, CURRENCY_SYMBOL } from "../lib/currency";
 import { Toast, type ToastState } from "../components/Toast";
 import { ConfirmDialog } from "../components/ConfirmDialog";
+import { DemoCleanupModal } from "../components/DemoCleanupModal";
 import { TrashIcon } from "../components/Icons";
-import type { Currency, Gender } from "../lib/types";
+import { findLikelyDemoEntries } from "../lib/demoDetection";
+import type { Currency, Entry, Gender } from "../lib/types";
 
 const APP_VERSION = "1.0.0";
 const APP_SHARE_URL = "https://szqazi.github.io/sherry-expense-tracker/";
@@ -16,6 +18,7 @@ export function SettingsScreen() {
     settings,
     updateSettings,
     entries,
+    deleteEntry,
     deleteAllEntries,
     deletePersonalInfo,
     currency,
@@ -35,6 +38,7 @@ export function SettingsScreen() {
   const [exportMonth, setExportMonth] = useState(currentMonthIndex());
   const [confirmAction, setConfirmAction] = useState<"entries" | "personalInfo" | null>(null);
   const [newCategory, setNewCategory] = useState("");
+  const [demoCandidates, setDemoCandidates] = useState<Entry[] | null>(null);
 
   function handleConfirmDelete() {
     if (confirmAction === "entries") {
@@ -162,6 +166,21 @@ export function SettingsScreen() {
     setToast({ kind: "success", message: "Your real data is back." });
   }
 
+  function handleScanForDemoEntries() {
+    const found = findLikelyDemoEntries(entries);
+    if (found.length === 0) {
+      setToast({ kind: "success", message: "No leftover demo entries found." });
+      return;
+    }
+    setDemoCandidates(found);
+  }
+
+  function handleConfirmCleanup(ids: string[]) {
+    ids.forEach((id) => deleteEntry(id));
+    setDemoCandidates(null);
+    setToast({ kind: "success", message: `Deleted ${ids.length} demo ${ids.length === 1 ? "entry" : "entries"}.` });
+  }
+
   async function handleCopySyncError() {
     if (!syncErrorMessage) return;
     try {
@@ -267,6 +286,16 @@ export function SettingsScreen() {
             <p className="text-[11px] text-[var(--text-muted)]">
               Fills the app with sample entries so you can explore every feature. Your real data is safely tucked
               away and comes back exactly as it was when you clear demo data.
+            </p>
+            <button
+              onClick={handleScanForDemoEntries}
+              className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3.5 text-sm font-medium text-[var(--text)] text-left active:bg-[var(--surface-2)]"
+            >
+              Scan for Leftover Demo Entries
+            </button>
+            <p className="text-[11px] text-[var(--text-muted)]">
+              Checks your real entries for anything that matches the sample demo data, in case demo data was ever
+              mixed in by mistake.
             </p>
           </>
         )}
@@ -466,6 +495,14 @@ export function SettingsScreen() {
           <span className="text-xs text-[var(--accent)] truncate ml-3">szqazi.github.io/sherry-expense-tracker</span>
         </button>
       </Section>
+
+      {demoCandidates && (
+        <DemoCleanupModal
+          candidates={demoCandidates}
+          onDelete={handleConfirmCleanup}
+          onCancel={() => setDemoCandidates(null)}
+        />
+      )}
 
       {confirmAction && (
         <ConfirmDialog
