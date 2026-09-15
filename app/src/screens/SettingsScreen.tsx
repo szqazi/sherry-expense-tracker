@@ -12,6 +12,7 @@ import type { Currency, Entry, Gender } from "../lib/types";
 
 const APP_VERSION = "1.0.0";
 const APP_SHARE_URL = "https://szqazi.github.io/sherry-expense-tracker/";
+const APP_GUIDE_URL = "https://claude.ai/code/artifact/d657cb3d-6c81-4cc2-9a6e-9d23baa41f48";
 
 export function SettingsScreen() {
   const {
@@ -110,17 +111,17 @@ export function SettingsScreen() {
     updateSettings({ expenseCategories: settings.expenseCategories.filter((x) => x !== c) });
   }
 
-  async function handleShare() {
+  async function handleShare(url: string, title: string) {
     if (navigator.share) {
       try {
-        await navigator.share({ title: "Sherry Expense Tracker", url: APP_SHARE_URL });
+        await navigator.share({ title, url });
       } catch {
         // user cancelled the share sheet — nothing to do
       }
       return;
     }
     try {
-      await navigator.clipboard.writeText(APP_SHARE_URL);
+      await navigator.clipboard.writeText(url);
       setToast({ kind: "success", message: "Link copied to clipboard." });
     } catch {
       setToast({ kind: "error", message: "Couldn't copy the link. Please try again." });
@@ -488,12 +489,29 @@ export function SettingsScreen() {
         <InfoRow label="App Version" value={APP_VERSION} />
         <InfoRow label="Developer" value="Sherry" />
         <button
-          onClick={handleShare}
+          onClick={() => handleShare(APP_SHARE_URL, "Sherry Expense Tracker")}
           className="w-full flex items-center justify-between bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3.5 text-left active:bg-[var(--surface-2)]"
         >
           <span className="text-sm font-medium text-[var(--text)]">Share App</span>
           <span className="text-xs text-[var(--accent)] truncate ml-3">szqazi.github.io/sherry-expense-tracker</span>
         </button>
+        <div className="w-full flex items-center justify-between gap-3 bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3.5">
+          <a
+            href={APP_GUIDE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-medium text-[var(--text)]"
+          >
+            User Guide
+          </a>
+          <button
+            onClick={() => handleShare(APP_GUIDE_URL, "Sherry Expense Tracker — User Guide")}
+            className="shrink-0 text-xs font-medium active:opacity-80"
+            style={{ color: "var(--accent)" }}
+          >
+            Share
+          </button>
+        </div>
       </Section>
 
       {demoCandidates && (
