@@ -246,3 +246,15 @@ Under Setting there should be:
 
 &#x09;	\* Share App (Give here the link to the GitHub.io live app which can be used to share with others)
 
+
+
+## Backend Features
+
+
+
+##### "Sign in with Google" + cloud sync —
+
+### 
+
+an optional Google sign-in in Settings that would sync the entries/settings to a cloud database, so a new phone or a cleared browser wouldn't lose the data
+
