@@ -10,6 +10,8 @@ export const DEFAULT_EXPENSE_CATEGORIES: string[] = [
   "PK Maids",
   "PK Bills",
   "PK Others",
+  "Clothing",
+  "Educational",
   "DE",
   "Car",
   "Health",

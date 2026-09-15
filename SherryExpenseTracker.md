@@ -92,7 +92,7 @@ The default mode (Home Screen) should be the Entry Mode
 
 &#x09;	\* "Expense Distribution":  It should consider ALL expenses categories
 
-&#x09;	\* "PK Expense Distribution": It should consider all expenses categories other than "DE" and "DE Air Ticket". If I click on any category type in the graph, it should take me to the list of all expenses for that category for that particular month. 
+&#x09;	\* "PK Expense Distribution": It should consider all expenses categories other than "DE" and "DE Air Ticket". If I click on any category type in the graph, it should take me to the list of all expenses for that category for that particular month.
 
 &#x09;	\* "Expenses variation on Days": A bar graph showing the expenses on each day
 
@@ -104,7 +104,7 @@ The default mode (Home Screen) should be the Entry Mode
 
 &#x09;		\* it should be possible to swipe the screen and go from one week / month to the other
 
-&#x09;		\* Weekdays should be in one colour and weekend in another 
+&#x09;		\* Weekdays should be in one colour and weekend in another
 
 &#x09;		\* Clicking on a specific day should list all the expenses for that specific day
 
@@ -171,6 +171,10 @@ The default mode (Home Screen) should be the Entry Mode
 &#x09;\* PK Dine Out / Delivery
 
 &#x09;\* PK Others
+
+&#x09;\* Clothing
+
+&#x09;\* Educational
 
 &#x09;\* Family Support
 
