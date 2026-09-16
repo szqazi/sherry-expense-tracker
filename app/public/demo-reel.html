@@ -1,3 +1,5 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sherry Expense Tracker Demo Reel</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
@@ -30,12 +32,13 @@
   }
 
   *{ box-sizing:border-box; }
+  html,body{ height:100%; margin:0; }
   body{
     background:var(--stage);
     color:var(--ink);
     font-family:"IBM Plex Sans", system-ui, sans-serif;
     display:flex; align-items:center; justify-content:center;
-    min-height:640px;
+    min-height:100dvh;
     padding:36px 16px;
     -webkit-font-smoothing:antialiased;
   }
@@ -57,6 +60,35 @@
   .screen{
     position:relative; width:100%; height:100%; overflow:hidden; border-radius:28px;
     background:#0b0b0f; border:1px solid #2a2a34;
+  }
+
+  /* On an actual phone, a phone-frame illustration inside the real phone
+     wastes almost the whole screen — go full-bleed instead, the same way
+     the real app fills its viewport, and move the wordmark/caption to
+     fixed overlays so they don't claim separate layout space. */
+  @media (max-width:560px){
+    body{ padding:0; min-height:100dvh; }
+    .rig{ gap:0; width:100%; }
+    .phone{
+      width:100vw; height:100dvh; border-radius:0; padding:0; box-shadow:none;
+    }
+    .screen{ border-radius:0; border:none; }
+    /* The in-screen progress bar already sits near the top edge — a
+       wordmark banner there would cover it, so drop the wordmark on
+       mobile rather than fight it for the same few pixels. */
+    .wordmark{ display:none; }
+    /* The screen underneath is always the app's own fixed dark UI, regardless
+       of this page's light/dark theme — so this overlay uses fixed light-on
+       -dark colors to stay readable, instead of the theme-variable ink tokens. */
+    .caption{
+      position:fixed; left:0; right:0; bottom:0; z-index:40;
+      margin-top:0; color:#9a9aa6;
+      padding:28px 16px calc(env(safe-area-inset-bottom) + 16px);
+      background:linear-gradient(transparent, rgba(11,11,15,.85));
+    }
+    .caption b{ color:#f4f4f6; }
+    .progress{ top:calc(env(safe-area-inset-top) + 10px); }
+    .scene{ padding:calc(env(safe-area-inset-top) + 34px) 20px calc(env(safe-area-inset-bottom) + 64px) 20px; }
   }
 
   .progress{
