@@ -12,7 +12,7 @@ import type { Currency, Entry, Gender } from "../lib/types";
 
 const APP_VERSION = "1.0.0";
 const APP_SHARE_URL = "https://szqazi.github.io/sherry-expense-tracker/";
-const APP_GUIDE_URL = "https://claude.ai/code/artifact/d657cb3d-6c81-4cc2-9a6e-9d23baa41f48";
+const APP_GUIDE_URL = "https://szqazi.github.io/sherry-expense-tracker/guide.pdf";
 
 export function SettingsScreen() {
   const {
