@@ -10,7 +10,16 @@ import {
 } from "react";
 import type { User } from "@supabase/supabase-js";
 import type { Currency, Entry, Settings } from "./types";
-import { enterDemoMode, exitDemoMode, isDemoMode, loadEntries, loadSettings, saveEntries, saveSettings } from "./storage";
+import {
+  applyNewDefaultCategories,
+  enterDemoMode,
+  exitDemoMode,
+  isDemoMode,
+  loadEntries,
+  loadSettings,
+  saveEntries,
+  saveSettings,
+} from "./storage";
 import { generateDemoEntries, generateDemoSettings } from "./demoData";
 import { supabase, syncConfigured } from "./supabase";
 import {
@@ -152,7 +161,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       await pushEntries(merged, userId);
 
       if (remoteSettings) {
-        setSettings(remoteSettings);
+        setSettings(applyNewDefaultCategories(remoteSettings));
       } else {
         await pushSettings(settingsRef.current, userId);
       }

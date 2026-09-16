@@ -1,5 +1,5 @@
 import { DEFAULT_EXCHANGE_RATES } from "./currency";
-import { DEFAULT_EXPENSE_CATEGORIES } from "./categories";
+import { DEFAULT_EXPENSE_CATEGORIES, mergeNewDefaultCategories } from "./categories";
 import type { Entry, Settings } from "./types";
 
 const ENTRIES_KEY = "sherry-expenses:entries";
@@ -7,6 +7,7 @@ const SETTINGS_KEY = "sherry-expenses:settings";
 const DEMO_MODE_KEY = "sherry-expenses:demoMode";
 const REAL_ENTRIES_BACKUP_KEY = "sherry-expenses:realEntriesBackup";
 const REAL_SETTINGS_BACKUP_KEY = "sherry-expenses:realSettingsBackup";
+const SEEN_DEFAULT_CATEGORIES_KEY = "sherry-expenses:seenDefaultCategories";
 
 export const DEFAULT_SETTINGS: Settings = {
   name: "",
@@ -36,18 +37,35 @@ export function saveEntries(entries: Entry[]): void {
   localStorage.setItem(ENTRIES_KEY, JSON.stringify(entries));
 }
 
+// Merges any category added to DEFAULT_EXPENSE_CATEGORIES since this device
+// last checked into `settings.expenseCategories`, without reintroducing one
+// the user deliberately deleted. See mergeNewDefaultCategories for how "new"
+// is decided. Safe to call on any Settings, local or pulled from sync.
+export function applyNewDefaultCategories(settings: Settings): Settings {
+  let seen: string[] | null = null;
+  try {
+    const raw = localStorage.getItem(SEEN_DEFAULT_CATEGORIES_KEY);
+    seen = raw ? JSON.parse(raw) : null;
+  } catch {
+    seen = null;
+  }
+  const result = mergeNewDefaultCategories(settings.expenseCategories, seen);
+  localStorage.setItem(SEEN_DEFAULT_CATEGORIES_KEY, JSON.stringify(result.seen));
+  return result.categories === settings.expenseCategories ? settings : { ...settings, expenseCategories: result.categories };
+}
+
 export function loadSettings(): Settings {
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
-    if (!raw) return { ...DEFAULT_SETTINGS };
+    if (!raw) return applyNewDefaultCategories({ ...DEFAULT_SETTINGS });
     const parsed = JSON.parse(raw);
-    return {
+    return applyNewDefaultCategories({
       ...DEFAULT_SETTINGS,
       ...parsed,
       exchangeRates: { ...DEFAULT_SETTINGS.exchangeRates, ...parsed.exchangeRates },
-    };
+    });
   } catch {
-    return { ...DEFAULT_SETTINGS };
+    return applyNewDefaultCategories({ ...DEFAULT_SETTINGS });
   }
 }
 
@@ -79,7 +97,9 @@ export function exitDemoMode(): { entries: Entry[]; settings: Settings } {
   const rawEntries = localStorage.getItem(REAL_ENTRIES_BACKUP_KEY);
   const rawSettings = localStorage.getItem(REAL_SETTINGS_BACKUP_KEY);
   const entries: Entry[] = rawEntries ? JSON.parse(rawEntries) : [];
-  const settings: Settings = rawSettings ? { ...DEFAULT_SETTINGS, ...JSON.parse(rawSettings) } : { ...DEFAULT_SETTINGS };
+  const settings: Settings = applyNewDefaultCategories(
+    rawSettings ? { ...DEFAULT_SETTINGS, ...JSON.parse(rawSettings) } : { ...DEFAULT_SETTINGS },
+  );
 
   saveEntries(entries);
   saveSettings(settings);
