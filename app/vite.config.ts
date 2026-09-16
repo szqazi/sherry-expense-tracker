@@ -30,8 +30,10 @@ export default defineConfig(({ command }) => ({
         globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
         // Without this, the SPA navigation fallback below intercepts every
         // top-level navigation — including a click on a plain <a href> to a
-        // static file like guide.pdf — and serves index.html instead.
-        navigateFallbackDenylist: [/\.pdf$/],
+        // static page like guide.pdf or demo-reel.html — and serves index.html
+        // instead. The app itself has no real routes besides its root, so
+        // excluding every non-root static page this way is safe.
+        navigateFallbackDenylist: [/\.pdf$/, /\.html$/],
       },
     }),
   ],

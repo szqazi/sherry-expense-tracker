@@ -13,6 +13,7 @@ import type { Currency, Entry, Gender } from "../lib/types";
 const APP_VERSION = "1.0.0";
 const APP_SHARE_URL = "https://szqazi.github.io/sherry-expense-tracker/";
 const APP_GUIDE_URL = "https://szqazi.github.io/sherry-expense-tracker/guide.pdf";
+const APP_DEMO_REEL_URL = "https://szqazi.github.io/sherry-expense-tracker/demo-reel.html";
 
 export function SettingsScreen() {
   const {
@@ -506,6 +507,23 @@ export function SettingsScreen() {
           </a>
           <button
             onClick={() => handleShare(APP_GUIDE_URL, "Sherry Expense Tracker — User Guide")}
+            className="shrink-0 text-xs font-medium active:opacity-80"
+            style={{ color: "var(--accent)" }}
+          >
+            Share
+          </button>
+        </div>
+        <div className="w-full flex items-center justify-between gap-3 bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3.5">
+          <a
+            href={APP_DEMO_REEL_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-medium text-[var(--text)]"
+          >
+            Demo Reel
+          </a>
+          <button
+            onClick={() => handleShare(APP_DEMO_REEL_URL, "Sherry Expense Tracker — Demo Reel")}
             className="shrink-0 text-xs font-medium active:opacity-80"
             style={{ color: "var(--accent)" }}
           >
