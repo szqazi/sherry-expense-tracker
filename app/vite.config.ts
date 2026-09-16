@@ -28,6 +28,10 @@ export default defineConfig(({ command }) => ({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
+        // Without this, the SPA navigation fallback below intercepts every
+        // top-level navigation — including a click on a plain <a href> to a
+        // static file like guide.pdf — and serves index.html instead.
+        navigateFallbackDenylist: [/\.pdf$/],
       },
     }),
   ],
